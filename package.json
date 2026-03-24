@@ -1,0 +1,11 @@
+{
+  "name": "port-workspace",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix app run dev",
+    "build": "npm --prefix app run build",
+    "preview": "npm --prefix app run preview",
+    "lint": "npm --prefix app run lint",
+    "install:app": "npm --prefix app install"
+  }
+}
