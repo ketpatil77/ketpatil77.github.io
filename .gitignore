@@ -1,6 +1,7 @@
 /node_modules
 /app/node_modules
 /app/dist
+.claude/
 .codex-artifacts/
 /app/hero-390*.png
 npm-debug.log*

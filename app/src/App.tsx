@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { CustomCursor } from '@/components/CustomCursor';
 import { Navigation } from '@/components/Navigation';

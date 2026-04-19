@@ -185,8 +185,6 @@ export function Services() {
 
   if (!servicesConfig.heading && servicesConfig.services.length === 0) return null;
 
-  const isMobileView = typeof window !== 'undefined' && window.innerWidth < 768;
-
   return (
     <section id="services" className="section-shell relative overflow-hidden">
       <div
@@ -218,7 +216,6 @@ export function Services() {
         {/* Mobile: accordion. Desktop: bento grid */}
         <div className="sm:grid sm:grid-cols-2 sm:gap-2.5 lg:grid-cols-3 space-y-2 sm:space-y-0">
           {servicesConfig.services.map((service, index) => {
-            const tint = SERVICE_TINTS[index % SERVICE_TINTS.length];
             const accentColors = ['var(--cyan-full)', '#8b5cf6', '#f43f5e', 'var(--cyan-dim)'];
             const accent = accentColors[index % accentColors.length];
             const isOpen = openIndex === index;

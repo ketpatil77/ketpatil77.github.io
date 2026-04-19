@@ -33,12 +33,6 @@ function useSpotlight(ref: React.RefObject<HTMLElement | null>, enabled: boolean
   }, [enabled, ref]);
 }
 
-function getRoleMonogram(role: string) {
-  const parts = role.replace(/[^A-Za-z0-9 ]/g, ' ').split(/\s+/).filter(Boolean);
-  const monogram = parts.map((part) => part[0]).join('').slice(0, 2).toUpperCase();
-  return monogram || role.slice(0, 2).toUpperCase();
-}
-
 export function Hero() {
   const shouldReduceMotion = useReducedMotion();
   const isMobile = useIsMobile();
@@ -49,10 +43,8 @@ export function Hero() {
   useSpotlight(cardRef, !lowPerformanceMode);
 
   const titleParts = heroConfig.title.split('|').map((part) => part.trim()).filter(Boolean);
-  const mobilePrimaryRole = titleParts[0] ?? heroConfig.title;
-  const mobileHeroLabel = mobilePrimaryRole;
+  const mobileHeroLabel = titleParts[0] ?? heroConfig.title;
   const mobileRoles = heroConfig.roles.slice(0, 3);
-  const mobileProofMetric = proofConfig.highlights[0] ?? heroConfig.metrics[0];
   const mobileStats = heroConfig.metrics.slice(0, 3);
 
   const particlePalette = isLight ? ['#1e40af', '#1d4ed8'] : ['#AEEBFF', '#22d3ee'];

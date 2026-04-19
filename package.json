@@ -1,6 +1,9 @@
 {
   "name": "port-workspace",
   "private": true,
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "dev": "npm --prefix app run dev",
     "build": "npm --prefix app run build",
