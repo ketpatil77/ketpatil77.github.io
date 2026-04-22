@@ -1,21 +1,21 @@
-import { useEffect, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { Sparkles, Terminal } from 'lucide-react';
+import { Boxes, Sparkles, Terminal } from 'lucide-react';
 import { AnimatedText } from '@/components/AnimatedText';
 import { motionTokens } from '@/lib/motion';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { techStackConfig } from '@/config';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import GeometricBlurMesh from '@/components/ui/geometric-blur-mesh';
-import { useIsMobile } from '@/hooks/use-mobile';
 import { useThemeContext } from '@/context/ThemeContext';
-import anime from 'animejs';
+import { DragScroll } from '@/components/ui/drag-scroll';
+import { TiltCard } from '@/components/ui/tilt-card';
 
 const brandColorMapDark: Record<string, string> = {
   NVIDIA: '#84cc16',
   Supabase: '#34d399',
   OpenAI: '#7dd3fc',
   Turso: '#60a5fa',
-  Vercel: '#c4c4c4',
+  Vercel: '#d4d4d8',
   GitHub: '#93c5fd',
   Claude: '#fb923c',
   Clerk: '#a78bfa',
@@ -32,54 +32,123 @@ const brandColorMapLight: Record<string, string> = {
   Clerk: '#7c3aed',
 };
 
+const explorerPositions = [
+  { x: -188, y: -42, rotateX: 18, rotateY: -16, floatY: -4 },
+  { x: -122, y: 78, rotateX: 10, rotateY: -10, floatY: 6 },
+  { x: 0, y: -102, rotateX: 20, rotateY: 0, floatY: -6 },
+  { x: 126, y: 78, rotateX: 10, rotateY: 12, floatY: 5 },
+  { x: 194, y: -16, rotateX: 16, rotateY: 16, floatY: -5 },
+] as const;
+
 function brandColor(name: string, index: number, isLight: boolean) {
   const map = isLight ? brandColorMapLight : brandColorMapDark;
-  const fallbacksDark = ['#67e8f9', '#22d3ee', '#38bdf8', '#a78bfa', '#34d399', '#f59e0b'];
-  const fallbacksLight = ['#0891b2', '#0284c7', '#2563eb', '#7c3aed', '#059669', '#b45309'];
+  const fallbacksDark = ['#ff7043', '#ffb300', '#c9a961', '#ffd54f', '#ff6e40', '#e8a838'];
+  const fallbacksLight = ['#e65100', '#bf360c', '#a07000', '#8d5200', '#c84b00', '#7a4200'];
   const fallback = (isLight ? fallbacksLight : fallbacksDark)[index % 6];
   return map[name] ?? fallback;
 }
 
-function FloatingLogos({ logos, disabled, isLight }: { logos: { name: string; src: string }[], disabled: boolean, isLight: boolean }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-    const elements = containerRef.current.querySelectorAll('.floating-logo');
-    anime.remove(elements);
-    if (disabled) return;
-
-    anime({
-      targets: elements,
-      translateY: () => anime.random(-8, 8),
-      translateX: () => anime.random(-4, 4),
-      rotate: () => anime.random(-2, 2),
-      duration: () => anime.random(2500, 4500),
-      easing: 'easeInOutSine',
-      direction: 'alternate',
-      loop: true,
-    });
-
-    return () => {
-      anime.remove(elements);
-    };
-  }, [disabled]);
+function LogoChip({
+  logo,
+  idx,
+  isLight,
+  shouldReduceMotion,
+}: {
+  logo: { name: string; src: string };
+  idx: number;
+  isLight: boolean;
+  shouldReduceMotion: boolean | null;
+}) {
+  const accent = brandColor(logo.name, idx, isLight);
 
   return (
-    <div ref={containerRef} className="flex flex-wrap justify-center gap-3 sm:gap-4 py-4 mb-2">
-      {logos.map((logo, idx) => (
-        <div
-          key={logo.name}
-          className="floating-logo surface-soft bg-opacity-30 backdrop-blur-md px-3 py-1.5 rounded-xl flex items-center gap-2 border border-[var(--border-subtle)] hover:border-[var(--border-dim)] transition-colors shadow-sm"
+    <motion.div
+      initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 14 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-20px' }}
+      transition={shouldReduceMotion ? { duration: 0 } : { delay: idx * 0.03, duration: 0.28, ease: motionTokens.ease.standard }}
+      whileHover={shouldReduceMotion ? undefined : { y: -2, scale: 1.02 }}
+      className="group flex min-h-[3rem] items-center justify-center gap-2 rounded-xl border px-4 py-3 text-center shadow-sm transition-colors"
+      style={{
+        borderColor: 'var(--border-subtle)',
+        background: 'linear-gradient(165deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015))',
+      }}
+    >
+      <span className="h-2 w-2 rounded-full shrink-0" style={{ background: accent }} aria-hidden="true" />
+      <span
+        className="type-heading text-[0.82rem] font-semibold tracking-tight"
+        style={{ color: accent }}
+      >
+        {logo.name}
+      </span>
+    </motion.div>
+  );
+}
+
+function ExplorerNode({
+  item,
+  index,
+  isLight,
+  shouldReduceMotion,
+}: {
+  item: { name: string; description: string; impact: string };
+  index: number;
+  isLight: boolean;
+  shouldReduceMotion: boolean | null;
+}) {
+  const position = explorerPositions[index] ?? explorerPositions[explorerPositions.length - 1];
+  const accent = brandColor(item.name, index, isLight);
+
+  return (
+    <div
+      className="absolute left-1/2 top-1/2"
+      style={{
+        transform: `translate(${position.x}px, ${position.y}px)`,
+      }}
+    >
+      <motion.div
+        initial={shouldReduceMotion ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.92, y: 16 }}
+        animate={shouldReduceMotion ? { opacity: 1, scale: 1, y: 0 } : { opacity: 1, scale: 1, y: 0 }}
+        transition={shouldReduceMotion ? { duration: 0 } : { delay: index * 0.05, duration: 0.32, ease: motionTokens.ease.standard }}
+      >
+        <motion.div
+          className="w-[9rem] rounded-2xl border px-3 py-3 shadow-[0_18px_40px_-26px_rgba(0,0,0,0.7)] sm:w-[10rem]"
+          style={{
+            borderColor: 'var(--border-dim)',
+            background: 'linear-gradient(165deg, rgba(255,255,255,0.08), rgba(255,255,255,0.025))',
+            transform: `rotateX(${position.rotateX}deg) rotateY(${position.rotateY}deg)`,
+            transformStyle: 'preserve-3d',
+            willChange: 'transform',
+          }}
+          animate={
+            shouldReduceMotion
+              ? undefined
+              : {
+                  y: [0, position.floatY, 0],
+                }
+          }
+          transition={
+            shouldReduceMotion
+              ? undefined
+              : {
+                  duration: 4.2 + index * 0.35,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }
+          }
+          whileHover={shouldReduceMotion ? undefined : { y: -6, scale: 1.03 }}
         >
-          <span
-            className="type-heading text-[0.8rem] font-bold tracking-tight"
-            style={{ color: brandColor(logo.name, idx, isLight) }}
-          >
-            {logo.name}
-          </span>
-        </div>
-      ))}
+          <p className="text-[0.54rem] font-bold uppercase tracking-[0.18em]" style={{ color: accent }}>
+            Stack node
+          </p>
+          <p className="mt-2 type-heading text-sm font-semibold leading-tight text-[var(--text-100)]">
+            {item.name}
+          </p>
+          <p className="mt-2 text-[0.68rem] leading-relaxed text-[var(--text-300)] line-clamp-3">
+            {item.impact}
+          </p>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }
@@ -87,28 +156,34 @@ function FloatingLogos({ logos, disabled, isLight }: { logos: { name: string; sr
 export function TechStack() {
   const shouldReduceMotion = useReducedMotion();
   const isMobile = useIsMobile();
-  const lowPerformanceMode = Boolean(shouldReduceMotion) || isMobile;
   const theme = useThemeContext();
+  const isLight = theme === 'light';
   const [activeTab, setActiveTab] = useState(techStackConfig.groups[0]?.id);
 
-  if (techStackConfig.groups.length === 0) return null;
+  const activeGroup = useMemo(
+    () => techStackConfig.groups.find((group) => group.id === activeTab) ?? techStackConfig.groups[0],
+    [activeTab],
+  );
+
+  if (techStackConfig.groups.length === 0 || !activeGroup) return null;
+
+  const explorerItems = activeGroup.items.slice(0, 5);
 
   return (
     <section id="tech-stack" className="section-shell relative overflow-hidden">
-      {/* Dynamic Background Mesh */}
       <div
-        className="ambient-blob pointer-events-none absolute top-1/3 right-1/4 h-[500px] w-[500px] opacity-[0.04] rounded-full mix-blend-screen"
+        className="ambient-blob pointer-events-none absolute top-1/3 right-1/4 h-[500px] w-[500px] rounded-full opacity-[0.04] mix-blend-screen"
         style={{ background: 'radial-gradient(circle, var(--cyan-full), transparent 60%)' }}
         aria-hidden="true"
       />
 
       <div className="container-large relative z-10">
-        <div className="section-header items-center text-center mb-6">
+        <div className="section-header items-start text-left">
           <motion.span
             initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-50px' }}
-            className="section-eyebrow mx-auto"
+            className="section-eyebrow"
           >
             <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
             {techStackConfig.label}
@@ -117,106 +192,228 @@ export function TechStack() {
             el="h2"
             text={techStackConfig.heading}
             type="words"
-            className="section-title max-w-3xl text-balance mt-2"
+            className="section-title max-w-3xl text-balance"
           />
+          <p className="section-copy type-body max-w-3xl">{techStackConfig.description}</p>
         </div>
 
-        {/* Compressed Floating Logos */}
         <motion.div
-          initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 20 }}
+          initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 18 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={lowPerformanceMode ? { duration: 0 } : { delay: 0.1, duration: 0.3 }}
+          transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.3, ease: motionTokens.ease.standard }}
+          className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5"
         >
-          <FloatingLogos logos={techStackConfig.logos} disabled={lowPerformanceMode} isLight={theme === 'light'} />
+          {techStackConfig.logos.map((logo, idx) => (
+            <LogoChip
+              key={logo.name}
+              logo={logo}
+              idx={idx}
+              isLight={isLight}
+              shouldReduceMotion={shouldReduceMotion}
+            />
+          ))}
         </motion.div>
 
-        {!lowPerformanceMode && (
-          <motion.div
-            initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={motionTokens.spring.soft}
-            className="mb-6"
-          >
-            <div className="glass-card overflow-hidden rounded-2xl border border-[var(--border-dim)]">
-              <div className="flex items-center justify-between border-b border-[var(--border-subtle)] px-4 py-2">
-                <p className="type-heading text-xs uppercase tracking-[0.2em] text-[var(--text-300)]">
-                  Interactive Architecture Canvas
-                </p>
-                <p className="type-body text-[0.65rem] text-[var(--text-400)]">
-                  Click to cycle visual states
-                </p>
-              </div>
-              <GeometricBlurMesh
-                className="h-[11rem] sm:h-[13rem] lg:h-[14rem]"
-                showHud={false}
-                enableKeyboard={false}
-                initialShape={2}
-              />
-            </div>
-          </motion.div>
-        )}
-
-        {/* Animated Tabs with Condensed Grid */}
         <motion.div
-          initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 30 }}
+          initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={shouldReduceMotion ? { duration: 0 } : motionTokens.spring.soft}
+          className="mt-8 overflow-hidden rounded-[1.75rem] border border-[var(--border-dim)]"
+          style={{
+            background:
+              'radial-gradient(circle at top, rgba(255,112,67,0.12), transparent 42%), linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.015))',
+          }}
+        >
+          <div className="flex items-center justify-between border-b border-[var(--border-subtle)] px-4 py-3">
+            <div>
+              <p className="type-heading text-xs uppercase tracking-[0.2em] text-[var(--cyan-full)]">
+                Technology Explorer
+              </p>
+              <p className="mt-1 text-[0.72rem] text-[var(--text-400)]">
+                Local depth scene tied to the active stack category.
+              </p>
+            </div>
+            <div className="hidden items-center gap-2 rounded-full border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-3 py-1 text-[0.68rem] font-medium text-[var(--text-300)] sm:inline-flex">
+              <Boxes className="h-3.5 w-3.5 text-[var(--cyan-dim)]" aria-hidden="true" />
+              {activeGroup.label}
+            </div>
+          </div>
+
+          <div
+            className="relative h-[15rem] overflow-hidden sm:h-[17rem]"
+            style={{
+              backgroundImage:
+                'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)',
+              backgroundSize: '34px 34px',
+            }}
+          >
+            <div
+              className="pointer-events-none absolute inset-x-0 top-0 h-full"
+              style={{
+                background:
+                  'radial-gradient(circle at center, rgba(255,112,67,0.12), transparent 46%), radial-gradient(circle at center, rgba(201,169,97,0.08), transparent 58%)',
+              }}
+              aria-hidden="true"
+            />
+
+            <motion.div
+              key={activeGroup.id}
+              initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.28, ease: motionTokens.ease.standard }}
+              className="absolute left-1/2 top-1/2 w-[10rem] -translate-x-1/2 -translate-y-1/2 rounded-[1.6rem] border border-[var(--border-dim)] px-4 py-4 text-center shadow-[0_24px_60px_-34px_rgba(0,0,0,0.8)]"
+              style={{
+                background: 'linear-gradient(165deg, rgba(10,10,10,0.7), rgba(24,24,24,0.45))',
+                backdropFilter: 'blur(10px)',
+              }}
+            >
+              <p className="text-[0.56rem] font-bold uppercase tracking-[0.18em] text-[var(--text-400)]">
+                Active layer
+              </p>
+              <p className="mt-2 type-heading text-base font-semibold text-[var(--text-100)]">
+                {activeGroup.label}
+              </p>
+              <p className="mt-2 text-xs leading-relaxed text-[var(--text-300)]">
+                {explorerItems.length} core technologies with production-facing impact.
+              </p>
+            </motion.div>
+
+            {!isMobile &&
+              explorerItems.map((item, index) => (
+                <ExplorerNode
+                  key={`${activeGroup.id}-${item.name}`}
+                  item={item}
+                  index={index}
+                  isLight={isLight}
+                  shouldReduceMotion={shouldReduceMotion}
+                />
+              ))}
+
+            {isMobile && (
+              <div className="absolute inset-x-4 bottom-4 grid grid-cols-2 gap-2">
+                {explorerItems.slice(0, 4).map((item) => (
+                  <div
+                    key={`${activeGroup.id}-${item.name}`}
+                    className="rounded-xl border px-3 py-2"
+                    style={{
+                      borderColor: 'var(--border-subtle)',
+                      background: 'rgba(255,255,255,0.05)',
+                    }}
+                  >
+                    <p className="type-heading text-xs font-semibold text-[var(--text-100)]">{item.name}</p>
+                    <p className="mt-1 text-[0.68rem] leading-relaxed text-[var(--text-300)] line-clamp-2">
+                      {item.impact}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
-          transition={lowPerformanceMode ? { duration: 0 } : motionTokens.spring.soft}
+          transition={shouldReduceMotion ? { duration: 0 } : motionTokens.spring.soft}
+          className="mt-8"
         >
           <Tabs defaultValue={techStackConfig.groups[0].id} onValueChange={setActiveTab} className="w-full">
-            <div className="flex justify-center mb-6 relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[var(--border-subtle)] to-transparent h-px top-1/2 -z-10 hidden sm:block" />
-
-              <TabsList className="bg-[var(--bg-surface)] backdrop-blur-md border border-[var(--border-dim)] p-1.5 h-auto rounded-xl flex-wrap justify-center shadow-lg transition-colors">
-                {techStackConfig.groups.map(g => (
-                  <TabsTrigger
-                    className="rounded-lg px-4 py-2 text-xs sm:text-sm type-heading tracking-wide transition-all data-[state=active]:bg-[var(--bg-elevated)] data-[state=active]:text-[var(--text-100)] data-[state=active]:shadow-md data-[state=active]:border-[var(--border-dim)] border border-transparent hover:text-[var(--text-100)] text-[var(--text-300)]"
-                    value={g.id}
-                    key={g.id}
-                  >
-                    {g.label}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
+            <div className="relative mb-6">
+              {isMobile ? (
+                <DragScroll showFade snap={false} className="w-full">
+                  <div className="flex gap-2 px-1 py-1.5">
+                    {techStackConfig.groups.map((group) => (
+                      <button
+                        key={group.id}
+                        onClick={() => setActiveTab(group.id)}
+                        className={[
+                          'shrink-0 rounded-lg border px-4 py-2 text-sm font-semibold tracking-wide transition-all min-h-[40px]',
+                          activeTab === group.id
+                            ? 'border-[var(--border-dim)] bg-[var(--bg-elevated)] text-[var(--text-100)] shadow-md'
+                            : 'border-transparent text-[var(--text-300)]',
+                        ].join(' ')}
+                        style={{ fontFamily: 'var(--font-heading)' }}
+                      >
+                        {group.label}
+                      </button>
+                    ))}
+                  </div>
+                </DragScroll>
+              ) : (
+                <TabsList
+                  className="scrollbar-none h-auto w-full justify-start overflow-x-auto rounded-xl border border-[var(--border-dim)] bg-[var(--bg-surface)] p-1.5 shadow-lg transition-colors"
+                  style={{
+                    maskImage: 'linear-gradient(to right, black 80%, transparent 100%)',
+                    WebkitMaskImage: 'linear-gradient(to right, black 80%, transparent 100%)',
+                  }}
+                >
+                  {techStackConfig.groups.map((group) => (
+                    <TabsTrigger
+                      className="type-heading min-h-[40px] rounded-lg border border-transparent px-4 py-2 text-sm font-semibold tracking-wide text-[var(--text-300)] transition-all data-[state=active]:border-[var(--border-dim)] data-[state=active]:bg-[var(--bg-elevated)] data-[state=active]:text-[var(--text-100)] data-[state=active]:shadow-md hover:text-[var(--text-100)]"
+                      value={group.id}
+                      key={group.id}
+                    >
+                      {group.label}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              )}
             </div>
 
-            {techStackConfig.groups.map(group => (
-              <TabsContent value={group.id} key={group.id} className="mt-0 focus-visible:outline-none rounded-2xl" tabIndex={-1}>
+            {techStackConfig.groups.map((group) => (
+              <TabsContent value={group.id} key={group.id} className="mt-0 rounded-2xl focus-visible:outline-none" tabIndex={-1}>
                 {activeTab === group.id && (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.99 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3, ease: motionTokens.ease.standard }}
-                    className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4"
+                    transition={{ duration: 0.24, ease: motionTokens.ease.standard }}
+                    className={`grid items-stretch gap-3 grid-cols-1 sm:grid-cols-2 ${
+                      group.items.length >= 5 ? 'xl:grid-cols-5' : 'xl:grid-cols-4'
+                    }`}
                   >
                     {group.items.map((item) => (
-                      <div
+                      <TiltCard
                         key={item.name}
-                        className="group relative glass-card px-4 py-4 flex flex-col gap-2 hover:border-[var(--border-bright)] transition-all duration-300"
-                        tabIndex={0}
-                        aria-label={`${item.name}. ${item.description}. Impact: ${item.impact}`}
+                        maxTilt={5}
+                        scale={1.02}
+                        disabled={Boolean(shouldReduceMotion) || isMobile}
+                        className="h-full"
                       >
-                        <div className="absolute inset-0 rounded-[inherit] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" style={{ background: 'radial-gradient(ellipse at center, var(--cyan-trace), transparent 90%)' }} />
+                        <div
+                          className="group relative flex h-full min-h-[11.25rem] flex-col gap-3 rounded-2xl border p-4 transition-all duration-300 hover:border-[var(--border-bright)]"
+                          tabIndex={0}
+                          aria-label={`${item.name}. ${item.description}. Impact: ${item.impact}`}
+                          style={{
+                            borderColor: 'var(--border-subtle)',
+                            background: 'linear-gradient(165deg, rgba(255,255,255,0.035), rgba(255,255,255,0.015))',
+                          }}
+                        >
+                          <div
+                            className="absolute inset-0 rounded-[inherit] opacity-0 transition-opacity duration-500 group-hover:opacity-100 pointer-events-none"
+                            style={{ background: 'radial-gradient(ellipse at center, var(--cyan-trace), transparent 90%)' }}
+                          />
 
-                        <div className="relative z-10 flex items-center justify-between">
-                          <h3 className="type-heading text-sm sm:text-base font-bold text-[var(--text-100)] tracking-tight">
-                            {item.name}
-                          </h3>
-                          <Terminal className="w-3.5 h-3.5 text-[var(--text-400)] group-hover:text-[var(--cyan-full)] transition-colors duration-300" />
-                        </div>
+                          <div className="relative z-10 flex items-center justify-between gap-2">
+                            <h3 className="type-heading text-sm font-bold tracking-tight text-[var(--text-100)] sm:text-base">
+                              {item.name}
+                            </h3>
+                            <Terminal className="h-3.5 w-3.5 shrink-0 text-[var(--text-400)] transition-colors duration-300 group-hover:text-[var(--cyan-full)]" />
+                          </div>
 
-                        <p className="relative z-10 type-body text-[0.8rem] text-[var(--text-300)] leading-snug line-clamp-2 group-hover:line-clamp-none transition-all">
-                          {item.description}
-                        </p>
-
-                        <div className="relative z-10 mt-1 border-t border-[var(--border-subtle)] pt-2">
-                          <p className="type-body text-[0.72rem] italic text-[var(--cyan-dim)] group-hover:text-[var(--cyan-full)] transition-colors duration-300 line-clamp-2">
-                            {item.impact}
+                          <p className="relative z-10 type-body text-sm leading-relaxed text-[var(--text-300)]">
+                            {item.description}
                           </p>
+
+                          <div className="relative z-10 mt-auto border-t border-[var(--border-subtle)] pt-3">
+                            <p className="type-body text-sm italic leading-relaxed text-[var(--cyan-dim)] transition-colors duration-300 group-hover:text-[var(--cyan-full)]">
+                              {item.impact}
+                            </p>
+                          </div>
                         </div>
-                      </div>
+                      </TiltCard>
                     ))}
                   </motion.div>
                 )}

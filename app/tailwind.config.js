@@ -38,11 +38,19 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        // Warm editorial palette
+        cream: '#f5f1ed',
+        'warm-gray': '#3a3430',
+        'warm-border': '#4a4440',
+        'card-bg': '#1a1a1a',
+        canvas: '#0a0a0a',
+        'warm-orange': '#ff7043',
+        gold: '#c9a961',
       },
       fontFamily: {
-        serif: ['var(--font-serif)', 'serif'],
-        sans: ['var(--font-body)', 'sans-serif'],
-        mono: ['var(--font-mono)', 'monospace'],
+        serif: ["'Playfair Display'", 'var(--font-serif)', 'serif'],
+        sans: ["'Inter'", 'var(--font-body)', 'sans-serif'],
+        mono: ["'JetBrains Mono'", 'var(--font-mono)', 'monospace'],
       },
       fontSize: {
         'h1': ['clamp(2.7rem, 6.5vw, 4.8rem)', { lineHeight: '1.05', letterSpacing: '-0.02em' }],
@@ -68,6 +76,10 @@ module.exports = {
       },
       boxShadow: {
         xs: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        'warm-glow': '0 0 24px rgba(255, 112, 67, 0.15)',
+        'warm-glow-lg': '0 0 40px rgba(255, 112, 67, 0.25)',
+        'gold-glow': '0 0 20px rgba(201, 169, 97, 0.15)',
+        'card-hover': '0 8px 24px rgba(0, 0, 0, 0.6)',
       },
       keyframes: {
         "accordion-down": {
@@ -124,6 +136,14 @@ module.exports = {
           from: { transform: "rotate(0deg)" },
           to: { transform: "rotate(360deg)" },
         },
+        "glow-pulse": {
+          "0%, 100%": { boxShadow: "0 0 24px rgba(255, 112, 67, 0.15)" },
+          "50%": { boxShadow: "0 0 40px rgba(255, 112, 67, 0.25)" },
+        },
+        "subtle-float": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-4px)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -138,6 +158,8 @@ module.exports = {
         "text-slide-in": "text-slide-in 0.35s cubic-bezier(0.250, 0.460, 0.450, 0.940) forwards",
         "slide-in-right": "slide-in-right 0.5s cubic-bezier(0.215, 0.610, 0.355, 1) forwards",
         "spin-slow": "spin-slow 20s linear infinite",
+        "glow-pulse": "glow-pulse 2s ease-in-out infinite",
+        "subtle-float": "subtle-float 3s ease-in-out infinite",
       },
       transitionTimingFunction: {
         'out-quad': 'cubic-bezier(0.250, 0.460, 0.450, 0.940)',

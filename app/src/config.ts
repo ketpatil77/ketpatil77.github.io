@@ -8,9 +8,9 @@ export interface SiteConfig {
 
 export const siteConfig: SiteConfig = {
   language: 'en',
-  title: 'Ketan Patil | Full-Stack Product Engineer for AI & Secure Systems',
+  title: 'Ketan Patil | Full-Stack Engineer, AI/ML Systems & Published Research',
   description:
-    'Portfolio of Ketan Patil: production-grade product engineering across AI systems, secure full-stack platforms, and measurable delivery outcomes.',
+    'Portfolio of Ketan Patil: full-stack engineer, cybersecurity practitioner, AI/ML systems builder, and two-time published researcher with measurable delivery outcomes.',
 };
 
 export interface BrandConfig {
@@ -41,8 +41,8 @@ export interface SocialConfig {
 }
 
 export const socialConfig: SocialConfig[] = [
-  { iconName: 'Github', href: 'https://github.com/ketanpatil', label: 'GitHub' },
-  { iconName: 'Linkedin', href: 'https://linkedin.com/in/ketanpatil', label: 'LinkedIn' },
+  { iconName: 'Github', href: 'https://github.com/ketpatil77', label: 'GitHub' },
+  { iconName: 'Linkedin', href: 'https://www.linkedin.com/in/ketan-patil77', label: 'LinkedIn' },
   { iconName: 'Mail', href: 'mailto:ket.patil77@gmail.com', label: 'Email' },
   { iconName: 'Phone', href: 'tel:+917796895767', label: '+91-7796895767' },
 ];
@@ -67,9 +67,9 @@ export const navigationConfig: NavigationConfig = {
     { label: 'Case Studies', href: '#portfolio' },
     { label: 'Services', href: '#services' },
     { label: 'Experience', href: '#experience' },
+    { label: 'Research', href: '#publications' },
     { label: 'Stack', href: '#tech-stack' },
     { label: 'Profile', href: '#about' },
-    { label: 'Connect', href: '#contact' },
   ],
   contactLabel: brandConfig.resumeLabel,
   contactHref: brandConfig.resumeHref,
@@ -86,26 +86,32 @@ export interface HeroConfig {
   availability: string;
   backgroundImage: string;
   metrics: { label: string; value: string }[];
+  spotlightItems: { label: string; value: string }[];
 }
 
 export const heroConfig: HeroConfig = {
   name: 'Ketan Patil',
-  title: 'Full-Stack Product Engineer | AI Systems & Secure Platforms',
+  title: 'Full-Stack Engineer & Published Researcher | AI/ML Systems, Cybersecurity, and Production Platforms',
   intro:
-    'I build production systems that combine product clarity, secure architecture, and measurable operational impact.',
+    'I build end-to-end products that combine applied AI/ML, secure systems design, and measurable operational impact, backed by internships at Meta, Sophos, and DPIIT plus two peer-reviewed publications in 2026.',
   roles: [
-    'React/TypeScript Product Interfaces',
-    'AI Workflow & Agent Orchestration',
-    'Secure API & Identity Architecture',
-    'Cloud Delivery & Observability',
+    'Published AI/ML Research',
+    'React / TypeScript Product Systems',
+    'Cybersecurity & Secure APIs',
+    'Voice, Data, and Automation Workflows',
   ],
   location: 'India (remote-first, global collaboration)',
-  availability: 'Open for internships and full-time roles',
+  availability: 'Open for internships, full-time roles, and research-aligned engineering work',
   backgroundImage: '/images/hero-bg.jpg',
   metrics: [
-    { value: '10+', label: 'Projects Launched' },
-    { value: '3+', label: 'Years Experience' },
+    { value: '2', label: 'Peer-Reviewed Papers' },
+    { value: '7', label: 'Professional Certifications' },
     { value: '15K+', label: 'Daily Requests Supported' },
+  ],
+  spotlightItems: [
+    { label: 'Research', value: '2 peer-reviewed IJVRA papers in 2026' },
+    { label: 'Experience', value: 'Meta, Sophos, and DPIIT internships' },
+    { label: 'Domains', value: 'AI/ML, cybersecurity, AgriTech, HealthTech, GovTech' },
   ],
 };
 
@@ -124,26 +130,28 @@ export interface AboutConfig {
   images: AboutImage[];
   strengths: string[];
   languages: string[];
+  focusAreas: string[];
 }
 
 export const aboutConfig: AboutConfig = {
   label: 'About',
-  heading: 'Engineering with product judgment, reliability, and execution discipline.',
+  heading: 'Engineering across product delivery, applied AI research, and security-first execution.',
   description:
-    'I work across frontend architecture, backend systems, AI-assisted workflows, and security hardening, with focus on clear interfaces and production performance.',
+    'I work across frontend architecture, backend systems, AI/ML experimentation, voice pipelines, and security hardening, with a bias toward production readiness, quantified outcomes, and research-backed system design.',
   experienceValue: '3+',
-  experienceLabel: 'Years building\nreal-world systems',
+  experienceLabel: 'Years across\nproduct, AI, and security systems',
   images: [
     { src: '/images/about-1.jpg', alt: 'Desk setup with product sketches and code' },
     { src: '/images/about-2.jpg', alt: 'Collaboration session focused on delivery planning' },
   ],
   strengths: [
-    'Production React/TypeScript delivery',
-    'Applied AI workflow automation',
-    'Secure API design and hardening',
-    'Performance, reliability, and observability engineering',
+    'Two-time published researcher in applied AI/ML systems',
+    'Production React/TypeScript and Flask delivery',
+    'Secure API design, VAPT, and infrastructure hardening',
+    'Benchmarking, documentation, and measurable execution discipline',
   ],
   languages: ['English', 'Hindi', 'Marathi'],
+  focusAreas: ['Applied AI/ML', 'Cybersecurity', 'AgriTech', 'HealthTech', 'GovTech', 'Cloud / AWS'],
 };
 
 // Services section configuration
@@ -226,9 +234,9 @@ export interface TechStackConfig {
 export const techStackConfig: TechStackConfig = {
   label: 'Technology Stack',
   heading:
-    'Production technologies used across frontend, backend, AI workflows, security, and delivery operations.',
+    'Production technologies used across product engineering, AI/ML research, security, and delivery operations.',
   description:
-    'Core stack coverage across frontend, backend, AI workflows, cloud delivery, security testing, and developer tooling.',
+    'Core stack coverage across frontend, backend, AI research, cloud delivery, security testing, data systems, and developer tooling.',
   logos: [
     { name: 'NVIDIA', src: 'https://svgl.app/library/nvidia-wordmark-light.svg' },
     { name: 'Next.js', src: 'https://svgl.app/library/nextjs_icon_dark.svg' },
@@ -267,20 +275,30 @@ export const techStackConfig: TechStackConfig = {
       id: 'ai-ml',
       label: 'AI & ML Intelligence',
       items: [
-        { name: 'Google Gemini (Flash/Pro)', description: 'Integration of state-of-the-art multimodal models for AI-driven insights.', impact: 'Implemented weather-based AI forecasting in SkyTime.' },
-        { name: 'ASR & Whisper', description: 'Faster-Whisper, Wake-word triggers, and local audio-to-text pipelines.', impact: 'Reduced voice latency to <2.5s in SUNDAY assistant.' },
-        { name: 'SpeechBrain / ECAPA-TDNN', description: 'Owner-only speaker verification and secure biometric authentication.', impact: 'Secured SUNDAY against unauthorized voice commands.' },
-        { name: 'TTS (Edge/gTTS/Coqui)', description: 'Natural voice synthesis for real-time interactive assistants.', impact: 'Delivered realistic vocal feedback systems for Astro platforms.' }
+        { name: 'Google Gemini (Flash/Pro)', description: 'Integration of multimodal foundation models for actionable AI product workflows.', impact: 'Implemented AI forecasting and recommendations in SkyTime.' },
+        { name: 'ASR & Whisper', description: 'Faster-Whisper, wake-word orchestration, and low-latency local voice pipelines.', impact: 'Reduced voice latency to <2.5s in SUNDAY.' },
+        { name: 'SpeechBrain / ECAPA-TDNN', description: 'Speaker verification for secure, owner-only biometric command execution.', impact: 'Held false acceptance to <=1% in SUNDAY voice flows.' },
+        { name: 'TTS (Edge/gTTS/Coqui)', description: 'Natural text-to-speech systems for interactive assistants and guided outputs.', impact: 'Delivered natural voice response systems for assistant-grade products.' }
+      ],
+    },
+    {
+      id: 'research-data',
+      label: 'Research & Data Systems',
+      items: [
+        { name: 'Computer Vision Fusion', description: 'CNNs, multi-view fusion, VAAA, and BiFPN pipelines for viewpoint-invariant defect detection.', impact: 'Reached 95.3% accuracy and AUC 0.991 in published industrial inspection research.' },
+        { name: 'Multimodal Predictive Maintenance', description: 'Thermal imaging plus LiDAR depth fused through gated cross-modal attention for industrial IoT environments.', impact: 'Enabled fault anticipation up to 72 hours before failure in published research work.' },
+        { name: 'SQL & Data Modeling', description: 'Schema design, relational modeling, query optimization, and analytics-friendly data structures.', impact: 'Strengthened database and analytics fluency across Meta coursework and platform builds.' },
+        { name: 'Benchmarks & Technical Writing', description: 'Ablation studies, experiment design, IEEE-style writing, and long-form technical documentation.', impact: 'Converted research and product systems into 2 papers and 165+ pages of documentation.' }
       ],
     },
     {
       id: 'ops-testing',
       label: 'Operations & Quality',
       items: [
-        { name: 'Pytest / Vitest / Jest', description: 'Deterministic test suites for AI, frontend, and backend services.', impact: 'Maintained high coverage across the SUNDAY and Astro codebases.' },
-        { name: 'Docker & Redis', description: 'Containerized microservices and fast in-memory task queuing (Celery/Flower).', impact: 'Shipped fully reproducible stacks with real-time health monitoring.' },
-        { name: 'Quality: Black & ESLint', description: 'Production-grade code formatting and static analysis (Flake8/Pylint).', impact: 'Maintained enterprise-level legibility across 7+ project repos.' },
-        { name: 'Networking (CCNA)', description: 'Routing, switching, firewall I/O analysis, and secure VAPT testing.', impact: 'Secured NMU Student Portal against critical OTP bypasses.' }
+        { name: 'Pytest / Vitest / Jest', description: 'Deterministic test suites for AI, frontend, and backend services.', impact: 'Maintained reliable verification across assistant, dashboard, and API-heavy builds.' },
+        { name: 'Docker & Redis', description: 'Containerized services, Celery/Flower queues, and reproducible local-to-prod workflows.', impact: 'Shipped fully reproducible stacks with health monitoring and async jobs.' },
+        { name: 'Quality: Black & ESLint', description: 'Formatting, static analysis, and maintainability enforcement across fast-moving repositories.', impact: 'Preserved enterprise-grade code readability across 7+ active repos.' },
+        { name: 'Networking, SIEM & VAPT', description: 'Routing, switching, IDS/IPS tuning, SIEM awareness, and mitigation-focused security assessment.', impact: 'Remediated OTP bypass and 5+ critical issues on the NMU Student Portal.' }
       ],
     },
   ],
@@ -297,8 +315,8 @@ export interface ExperienceItem {
 
 export const experienceConfig = {
   label: 'Experience',
-  heading: 'Professional experience delivering reliability, security, and scale.',
-  description: 'Internship experience across telecom support, cybersecurity operations, and network performance programs.',
+  heading: 'Professional experience across telecom operations, cybersecurity, and network-scale support.',
+  description: 'Internship experience spanning government infrastructure, cybersecurity operations, and distributed-service monitoring with quantified delivery outcomes.',
   items: [
     {
       company: 'DPIIT, Government of India',
@@ -306,8 +324,9 @@ export const experienceConfig = {
       location: 'New Delhi, India',
       duration: 'Jan 2024 – Jun 2024',
       highlights: [
-        'Supported telecom systems serving 1,000+ users in production operations.',
-        'Reduced average incident resolution time by 15 minutes through structured troubleshooting workflows.'
+        'Administered communication infrastructure supporting 1,000+ users across critical government operations.',
+        'Reduced average incident resolution time by 15 minutes through structured troubleshooting workflows.',
+        'Coordinated hardware upgrade execution with telecom vendors while preserving zero-downtime operations.'
       ]
     },
     {
@@ -317,7 +336,8 @@ export const experienceConfig = {
       duration: 'Sep 2023 – Dec 2023',
       highlights: [
         'Analyzed firewall I/O across 200+ endpoints, increasing threat visibility by 18%.',
-        'Refined IDS configurations to reduce false positives by 10%.'
+        'Refined IDS configurations to reduce false positives by 10% and improve analyst signal quality.',
+        'Documented remediation playbooks and reusable internal references for recurring threat patterns.'
       ]
     },
     {
@@ -327,7 +347,8 @@ export const experienceConfig = {
       duration: 'May 2023 – Aug 2023',
       highlights: [
         'Optimized monitoring workflows handling ~15K daily requests, lowering latency by 12%.',
-        'Supported feature validation and testing, contributing to 20% faster internal release cycles.'
+        'Supported feature validation and testing, contributing to 20% faster internal release cycles.',
+        'Built monitoring dashboards that improved observability and incident visibility across distributed services.'
       ]
     }
   ]
@@ -371,6 +392,12 @@ export const credentialsConfig: CredentialsConfig = {
       degree: 'Diploma in Computer Engineering',
       duration: 'Jun 2021 – Jun 2024',
       location: 'Maharashtra, India'
+    },
+    {
+      institution: 'Maharashtra State Board',
+      degree: 'HSC',
+      duration: 'Feb 2020',
+      location: 'Maharashtra, India'
     }
   ],
   certifications: [
@@ -385,52 +412,135 @@ export const credentialsConfig: CredentialsConfig = {
     {
       name: 'AI for Cybersecurity',
       issuer: 'Johns Hopkins University',
-      year: '2025',
+      year: 'Apr 2025',
       summary:
         'Applied program focused on integrating AI techniques into threat detection, analysis, and response pipelines.',
       focusAreas: ['AI Threat Detection', 'Security Analytics', 'Incident Prioritization'],
     },
     {
-      name: 'Cybersecurity Analyst',
+      name: 'IBM Cybersecurity Analyst',
       issuer: 'IBM',
-      year: '2025',
+      year: 'Jun 2025',
       summary:
         'Role-focused cybersecurity training for SOC operations, incident handling, and vulnerability management.',
-      focusAreas: ['SOC Operations', 'Incident Response', 'Vulnerability Analysis'],
+      focusAreas: ['SOC Operations', 'Incident Response', 'Penetration Testing'],
     },
     {
-      name: 'Database Engineer',
+      name: 'Meta Database Engineer',
       issuer: 'Meta',
-      year: '2025',
+      year: 'Sep 2025',
       summary:
         'Database engineering track covering schema design, performance tuning, and reliability fundamentals.',
       focusAreas: ['Schema Design', 'Query Optimization', 'Data Reliability'],
     },
     {
-      name: 'Data Analyst',
+      name: 'Meta Data Analyst',
       issuer: 'Meta',
-      year: '2025',
+      year: 'Oct 2025',
       summary:
         'Analytics program centered on data interpretation, metrics storytelling, and decision support.',
       focusAreas: ['Data Interpretation', 'Metrics Reporting', 'Decision Support'],
     },
     {
+      name: 'Google IT Support Professional',
+      issuer: 'Google',
+      year: 'Nov 2025',
+      summary:
+        'IT support certification covering operating systems, diagnostics, networking, and user-focused troubleshooting.',
+      focusAreas: ['Systems Support', 'Diagnostics', 'Networking & OS'],
+    },
+    {
       name: 'AWS Machine Learning',
       issuer: 'Amazon',
-      year: '2025',
+      year: 'Nov 2025',
       summary:
         'Cloud ML learning path on model workflows, managed services, and scalable deployment practices.',
       focusAreas: ['ML Workflows on AWS', 'Model Deployment', 'Cloud-Scale Inference'],
-    },
-    {
-      name: 'IT Support Professional',
-      issuer: 'Google',
-      year: '2025',
-      summary:
-        'IT support certification covering operating systems, diagnostics, and user-focused troubleshooting.',
-      focusAreas: ['Systems Support', 'Diagnostics', 'User Operations'],
     }
   ]
+};
+
+export interface PublicationItem {
+  title: string;
+  journal: string;
+  issue: string;
+  publishedOn: string;
+  impactFactor: string;
+  paperId: string;
+  authors: string;
+  pdfHref: string;
+  summary: string;
+  contributions: string[];
+  metrics: string[];
+  focusAreas: string[];
+}
+
+export interface PublicationsConfig {
+  label: string;
+  heading: string;
+  description: string;
+  highlights: ProofMetric[];
+  themes: string[];
+  items: PublicationItem[];
+}
+
+export const publicationsConfig: PublicationsConfig = {
+  label: 'Research',
+  heading: 'Peer-reviewed publications that turn experimentation into deployable AI systems.',
+  description:
+    'Two 2026 IJVRA publications covering industrial inspection and predictive maintenance, with quantified performance and edge-deployment relevance.',
+  highlights: [
+    { label: 'Published Papers', value: '2' },
+    { label: 'Best Accuracy', value: '95.3%' },
+    { label: 'Annotated Sets', value: '52,400' },
+    { label: 'Early Fault Horizon', value: '72h' },
+  ],
+  themes: [
+    'Computer vision fusion and viewpoint-invariant defect detection',
+    'Thermal + depth multimodal predictive maintenance',
+    'Edge-deployable AI systems for industrial environments',
+    'Benchmark design, ablation studies, and technical writing'
+  ],
+  items: [
+    {
+      title: 'Multi-Angle Industrial Inspection Fusion: A Unified Deep Learning Framework for Viewpoint-Invariant Defect Detection',
+      journal: 'International Journal of Versatile Research and Analysis (IJVRA)',
+      issue: 'Vol. 4, Issue 3',
+      publishedOn: 'March 2026',
+      impactFactor: '9.12',
+      paperId: 'IJVRA2603948',
+      authors: 'Dr. Nitin Santosh Patil, Dr. Sandip N. Vende, Ketan V. Patil',
+      pdfHref: 'https://ijpub.org/ijvra/papers/IJVRA2603948.pdf',
+      summary:
+        'Proposed MAIFNet, a multi-view fusion framework for industrial surface defect detection across 3-8 calibrated camera viewpoints.',
+      contributions: [
+        'Designed Viewpoint-Aware Attention Aggregation and BiFPN-based fusion for viewpoint-invariant inspection workflows.',
+        'Validated on InspectFusion-360 covering 52,400 annotated sets, 6 component categories, and 8 defect classes.',
+        'Demonstrated edge readiness at 31.4 FPS on NVIDIA Jetson AGX Orin for real industrial deployment contexts.'
+      ],
+      metrics: ['95.3% accuracy', 'AUC 0.991', '+3.1–15.8 pp vs baselines', '31.4 FPS on Jetson'],
+      focusAreas: ['Computer Vision', 'Multi-view Fusion', 'BiFPN', 'Edge Inference']
+    },
+    {
+      title: 'Thermal + Depth Fusion for Predictive Maintenance: A Multimodal Framework for Early Fault Anticipation in Rotating Machinery',
+      journal: 'International Journal of Versatile Research and Analysis (IJVRA)',
+      issue: 'Vol. 4, Issue 4',
+      publishedOn: 'April 2026',
+      impactFactor: '9.12',
+      paperId: 'IJVRA2604277',
+      authors: 'Dr. Nitin Santosh Patil, Dr. Sandip N. Vende, Ketan Vilas Patil',
+      pdfHref: 'https://ijpub.org/ijvra/papers/IJVRA2604277.pdf',
+      summary:
+        'Designed a gated cross-modal attention framework that fuses thermal imaging and LiDAR depth data for early rotating-machinery fault anticipation.',
+      contributions: [
+        'Addressed single-modality predictive-maintenance limits by combining thermal anomaly signatures with geometric deformation signals.',
+        'Architected the pipeline for industrial IoT and edge-deployable environments rather than lab-only evaluation.',
+        'Enabled fault anticipation up to 72 hours before failure to widen operational intervention windows.'
+      ],
+      metrics: ['72h early warning', 'Thermal + LiDAR fusion', 'Cross-modal attention', 'Industrial IoT ready'],
+      focusAreas: ['Multimodal ML', 'Predictive Maintenance', 'Cross-modal Attention', 'Industrial IoT']
+    }
+  ],
 };
 
 export interface ProofMetric {
@@ -446,14 +556,15 @@ export interface ProofConfig {
 }
 
 export const proofConfig: ProofConfig = {
-  label: 'Case Studies',
-  heading: 'Case studies with clear ownership, technical depth, and quantified outcomes.',
+  label: 'Delivery Proof',
+  heading: 'Case studies, research outputs, and quantified delivery proof.',
   description:
-    'A curated set of projects showing what was built, why it mattered, and what improved.',
+    'A curated set of projects showing what was built, why it mattered, and what improved in production or research settings.',
   highlights: [
+    { label: 'Peer-Reviewed Papers', value: '2' },
+    { label: 'Professional Certifications', value: '7' },
     { label: 'Daily Traffic Supported', value: '15K+' },
-    { label: 'Latency Improvement', value: '12%' },
-    { label: 'Endpoints Secured', value: '200+' },
+    { label: 'Best Research Accuracy', value: '95.3%' },
   ],
 };
 
@@ -472,6 +583,8 @@ export interface ProjectItem {
   duration: string;
   stackSummary: string;
   outcome: string;
+  highlights: string[];
+  metrics: string[];
   featured?: boolean;
 }
 
@@ -488,7 +601,7 @@ export const portfolioConfig: PortfolioConfig = {
   label: 'Projects',
   heading: 'Selected work with measurable outcomes',
   description:
-    'Recruiter-friendly case studies showing role ownership, technical depth, and delivery impact.',
+    'Recruiter-friendly case studies showing role ownership, technical depth, measurable outcomes, and research-grade execution.',
   projects: [
     {
       title: 'NAKSHATRAA',
@@ -504,8 +617,14 @@ export const portfolioConfig: PortfolioConfig = {
       role: 'Full-Stack Engineer & AI System Integration',
       duration: 'Feb 2026',
       stackSummary:
-        'Flask + Celery/Redis pipelines, NumPy computation, geopy mapping, Swiss Ephemeris.',
-      outcome: 'Rashi, Dasha, and transit-aware prediction workflows with health monitoring and rate limiting.',
+        'Flask + Celery/Redis pipelines, Swiss Ephemeris mechanics, NumPy computation, geopy mapping, bilingual UI delivery, and Docker Compose deployment.',
+      outcome: 'Rashi, Dasha, and transit-aware prediction workflows with health monitoring, async PDF/email delivery, and rate limiting.',
+      highlights: [
+        'Shipped bilingual English and Marathi prediction flows with transit-aware life-domain insights.',
+        'Engineered async PDF generation and email pipelines with structured logging, health checks, and rate limiting.',
+        'Designed the interface and services for multi-region, multi-language scale-out.'
+      ],
+      metrics: ['Sub-second insights', '5 req/min/IP', 'Bilingual output', 'Dockerized multi-service stack'],
       featured: true,
     },
     {
@@ -522,7 +641,13 @@ export const portfolioConfig: PortfolioConfig = {
       role: 'Frontend Architect',
       duration: 'Feb 2026',
       stackSummary: 'React 19 + TypeScript, Google Generative AI (Gemini 3-Flash), Recharts 3.7.0.',
-      outcome: 'Highly interactive data visualisations with real-time AI weather advisor.',
+      outcome: 'Highly interactive data visualisations with a real-time AI weather advisor and action-oriented recommendations.',
+      highlights: [
+        'Combined live weather data with Gemini-powered recommendations for clothing and productivity planning.',
+        'Built the dashboard around high-clarity charts, fast interactions, and polished motion systems.',
+        'Converted raw forecast data into readable decisions instead of generic weather summaries.'
+      ],
+      metrics: ['Gemini-powered insights', 'React 19 UI', 'Interactive visualizations', 'Actionable forecasts'],
       featured: true,
     },
     {
@@ -539,8 +664,14 @@ export const portfolioConfig: PortfolioConfig = {
       role: 'Full-Stack Engineer & Voice Systems Architect',
       duration: 'Feb 2026',
       stackSummary:
-        'Wake-word -> VAD -> speaker verification -> ASR -> intent execution with contextual memory and planning.',
+        'Wake-word -> VAD -> speaker verification -> ASR -> intent execution with contextual memory, planning, and cross-platform service integration.',
       outcome: 'Deterministic natural-voice control for complex desktop workflows across Windows, macOS, and Linux.',
+      highlights: [
+        'Built a fully offline 5-stage voice pipeline for privacy-first desktop automation.',
+        'Implemented ECAPA-TDNN speaker verification with <=1% false acceptance for secure OS-level commands.',
+        'Integrated deployment flows for Windows Services, systemd, and launchd.'
+      ],
+      metrics: ['<2.5s median latency', '<=1% false acceptance', 'Offline-first', 'Cross-platform desktop'],
       featured: true,
     },
     {
@@ -557,7 +688,13 @@ export const portfolioConfig: PortfolioConfig = {
       role: 'AI / Data Engineering & System Integration',
       duration: 'Sep 2025',
       stackSummary: 'Region-validated remedies data across 25+ diseases, 50 crops, and 70+ approved products.',
-      outcome: 'Compliance-aware recommendation layer with multi-state scalability readiness.',
+      outcome: 'Compliance-aware recommendation layer with multi-state scalability readiness and Maharashtra availability validation.',
+      highlights: [
+        'Built a validated remedies database spanning 25+ diseases, 50 crops, and 70+ approved products.',
+        'Embedded withholding periods, regulatory flags, and availability constraints into recommendations.',
+        'Authored 165+ pages of technical and end-user documentation for rollout readiness.'
+      ],
+      metrics: ['25+ diseases', '50 crops', '70+ approved products', 'INR 10K-30K projected savings'],
     },
     {
       title: 'Chikitsamedha',
@@ -573,7 +710,13 @@ export const portfolioConfig: PortfolioConfig = {
       role: 'Full-Stack Developer',
       duration: 'Nov 2025',
       stackSummary: 'Flask backend (7 endpoints), 100-medicine dataset, 50+ rules engine, risk scoring, React frontend.',
-      outcome: 'Real-time interaction checks with offline-capable containerized deployment.',
+      outcome: 'Real-time interaction checks with 0-100 risk scoring and offline-capable containerized deployment.',
+      highlights: [
+        'Delivered 7 REST endpoints backed by a 100-medicine dataset spanning 30+ drug classes.',
+        'Implemented a 50+ rule inference engine covering CYP450 metabolism, additive toxicity, and contraindications.',
+        'Built a React frontend with real-time search and color-coded quantitative risk stratification.'
+      ],
+      metrics: ['7 REST endpoints', '100-medicine dataset', '50+ inference rules', '0-100 risk score'],
     },
     {
       title: 'NMU Student Portal Penetration Testing',
@@ -589,7 +732,13 @@ export const portfolioConfig: PortfolioConfig = {
       role: 'Security Analyst',
       duration: '2024',
       stackSummary: 'Exploit validation, session-hijack testing, and remediation-focused risk reporting.',
-      outcome: '20-page assessment with prioritized fixes for 5+ critical vulnerabilities.',
+      outcome: '20-page assessment with prioritized fixes for 5+ critical vulnerabilities and OTP bypass remediation.',
+      highlights: [
+        'Discovered an OTP bypass through MITM and session-layer analysis during penetration testing.',
+        'Validated and documented 5+ critical vulnerabilities with remediation-ready reporting.',
+        'Delivered a prioritized security report that reduced overall attack surface by roughly 40%.'
+      ],
+      metrics: ['OTP bypass remediated', '5+ critical issues', '~40% attack-surface reduction', '20-page report'],
     },
     {
       title: 'Universal Image Tool',
@@ -605,7 +754,13 @@ export const portfolioConfig: PortfolioConfig = {
       role: 'Tooling Engineer',
       duration: '2025',
       stackSummary: 'Automated transform/compression pipeline for large image batches.',
-      outcome: 'Faster publishing workflow with smaller and consistent media assets.',
+      outcome: 'Faster publishing workflow with smaller, consistent media assets and reduced manual optimization work.',
+      highlights: [
+        'Built deterministic batch-processing automation for high-volume media optimization.',
+        'Optimized more than 500 images while preserving usable quality.',
+        'Reduced repeated manual asset-prep work for publishing workflows.'
+      ],
+      metrics: ['500+ images', '~70% size reduction', 'Deterministic CLI flow', 'Batch automation'],
     },
     {
       title: 'LC Issuer App',
@@ -621,7 +776,13 @@ export const portfolioConfig: PortfolioConfig = {
       role: 'Automation Developer',
       duration: '2025',
       stackSummary: 'Input validation, CSV parsing, and deterministic template-based generation.',
-      outcome: 'High-volume certificate issuing with reduced human error and turnaround time.',
+      outcome: 'High-volume certificate issuing with reduced human error, faster turnaround time, and CSV-driven repeatability.',
+      highlights: [
+        'Automated repetitive issuance tasks through validated CSV ingestion and template workflows.',
+        'Reduced manual certificate generation effort by around 70%.',
+        'Improved repeatability and lowered the risk of human-entry errors.'
+      ],
+      metrics: ['~70% effort reduction', 'CSV-driven workflow', 'Template automation', 'Lower human error'],
     },
     {
       title: 'Secure Ops Dashboard',
@@ -637,7 +798,13 @@ export const portfolioConfig: PortfolioConfig = {
       role: 'Frontend Lead',
       duration: '2025',
       stackSummary: 'Next.js 16.1.4, React 19.2.3, Tailwind CSS v4, dynamic aether-flow animations.',
-      outcome: 'Scalable dashboard foundation with optimized re-renders and dark-themed glassmorphism.',
+      outcome: 'Scalable dashboard foundation with optimized re-renders, audit visibility, and premium dark glassmorphism.',
+      highlights: [
+        'Built a motherboard-themed secure operations dashboard focused on logs, metrics, and audit surfaces.',
+        'Used React 19, Next.js 16, and Tailwind CSS 4 for performance-conscious frontend delivery.',
+        'Designed motion and theming to feel premium without sacrificing clarity.'
+      ],
+      metrics: ['Next.js 16', 'React 19', 'Tailwind CSS 4', 'Audit-focused UI'],
     },
     {
       title: 'ChatGPT Export Backend',
@@ -653,7 +820,13 @@ export const portfolioConfig: PortfolioConfig = {
       role: 'Backend Engineer',
       duration: '2025',
       stackSummary: 'Express backend, Puppeteer for automation, MathML to OMML conversion logic.',
-      outcome: 'Streamlined export service with multi-format support and asset compression.',
+      outcome: 'Streamlined export service with multi-format support, XML/MathML handling, and asset compression.',
+      highlights: [
+        'Built specialized export automation for XML, MathML, and OMML-heavy document workflows.',
+        'Used browser automation and DOM tooling to preserve high-fidelity mathematical content.',
+        'Supported multi-format conversion with ZIP handling and asset compression.'
+      ],
+      metrics: ['XML / MathML / OMML', 'Browser automation', 'Multi-format export', 'Compression ready'],
     },
     {
       title: 'Farmer Market Guide',
@@ -669,7 +842,13 @@ export const portfolioConfig: PortfolioConfig = {
       role: 'Product Developer',
       duration: '2024',
       stackSummary: 'Static HTML/JS stack with dynamic JSON dashboards and browser testing.',
-      outcome: 'Functional multi-actor marketplace focusing on simplicity and loading performance.',
+      outcome: 'Functional multi-actor marketplace focusing on simplicity, accessibility, and low-connectivity performance.',
+      highlights: [
+        'Designed separate buyer, farmer, and middle-man dashboard flows on a static architecture.',
+        'Used lightweight JSON-driven data handling to avoid database complexity.',
+        'Optimized for straightforward access in low-connectivity usage contexts.'
+      ],
+      metrics: ['Static-site architecture', 'Multi-actor dashboards', 'No database dependency', 'Low-connectivity friendly'],
     },
   ],
   viewAllLabel: 'View All on GitHub',
@@ -690,10 +869,10 @@ export interface CTAConfig {
 }
 
 export const ctaConfig: CTAConfig = {
-  tags: ['Product UI', 'AI Workflows', 'Secure APIs', 'Scalable Delivery'],
-  heading: 'Open to conversations for engineering roles and outcome-focused product mandates.',
+  tags: ['Product UI', 'AI/ML Systems', 'Cybersecurity', 'Research-Backed Delivery'],
+  heading: 'Open to engineering roles that value product execution, AI systems thinking, and measurable proof.',
   description:
-    'If your team is hiring for product engineering, AI-enabled systems, or secure full-stack delivery, I can share relevant case studies and role-fit details quickly.',
+    'If your team is hiring for product engineering, AI/ML-enabled systems, cybersecurity-aware delivery, or research-aligned execution, I can share relevant case studies and role-fit details quickly.',
   buttonText: brandConfig.resumeLabel,
   buttonHref: brandConfig.resumeHref,
   email: 'ket.patil77@gmail.com',
@@ -716,9 +895,9 @@ export const footerConfig: FooterConfig = {
     { label: 'Case Studies', href: '#portfolio' },
     { label: 'Services', href: '#services' },
     { label: 'Experience', href: '#experience' },
+    { label: 'Research', href: '#publications' },
     { label: 'Stack', href: '#tech-stack' },
     { label: 'Profile', href: '#about' },
-    { label: 'Connect', href: '#contact' },
   ],
   copyright: `© ${new Date().getFullYear()} Ketan Patil. All rights reserved.`,
   credit: 'Engineered with React, TypeScript, Tailwind CSS, and Framer Motion.',

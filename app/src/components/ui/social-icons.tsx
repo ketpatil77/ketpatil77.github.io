@@ -49,6 +49,15 @@ function iconForName(name: string) {
   return found?.icon;
 }
 
+function iconForItem(item: SocialIconItem) {
+  if (item.icon) return item.icon;
+  if (item.href.startsWith('tel:')) return <Phone className="size-[18px]" />;
+  if (item.href.startsWith('mailto:')) return iconForName('Email');
+  if (item.href.includes('github.com')) return iconForName('GitHub');
+  if (item.href.includes('linkedin.com')) return iconForName('LinkedIn');
+  return iconForName(item.name);
+}
+
 export function SocialIcons({
   items = defaultSocials,
   className,
@@ -61,7 +70,7 @@ export function SocialIcons({
     () =>
       items.map((item) => ({
         ...item,
-        icon: item.icon ?? iconForName(item.name),
+        icon: iconForItem(item),
       })),
     [items]
   );

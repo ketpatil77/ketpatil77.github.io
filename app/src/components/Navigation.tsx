@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useState, type MouseEvent } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { useEffect, useMemo, useRef, useState, type MouseEvent } from 'react';
+import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import {
   ArrowRight,
   Boxes,
   BriefcaseBusiness,
+  FileText,
   LayoutPanelTop,
-  Mail,
   Menu,
   Moon,
   Sun,
@@ -23,8 +23,8 @@ const HEADER_OFFSET = 82;
 const mobileOverlayLinks: Array<{ label: string; href: string; icon: LucideIcon }> = [
   { label: 'Overview', href: '#hero', icon: LayoutPanelTop },
   { label: 'Case Studies', href: '#portfolio', icon: BriefcaseBusiness },
-  { label: 'Systems', href: '#services', icon: Boxes },
-  { label: 'Contact', href: '#contact', icon: Mail },
+  { label: 'Experience', href: '#experience', icon: Boxes },
+  { label: 'Research', href: '#publications', icon: FileText },
 ];
 
 type NavigationProps = {
@@ -33,10 +33,11 @@ type NavigationProps = {
 };
 
 function resolveMobileActiveHref(activeHref: string) {
-  if (activeHref === '#contact') return '#contact';
+  if (activeHref === '#publications') return '#publications';
+  if (activeHref === '#experience') return '#experience';
   if (activeHref === '#portfolio') return '#portfolio';
-  if (activeHref === '#services' || activeHref === '#experience' || activeHref === '#tech-stack' || activeHref === '#about') {
-    return '#services';
+  if (activeHref === '#services' || activeHref === '#tech-stack' || activeHref === '#about') {
+    return '#experience';
   }
   return '#portfolio';
 }
@@ -47,6 +48,12 @@ export function Navigation({ onThemeToggle, theme }: NavigationProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeHref, setActiveHref] = useState(navigationConfig.links[0]?.href ?? '#portfolio');
   const [scrollProgress, setScrollProgress] = useState(0);
+
+  const navRef = useRef<HTMLElement>(null);
+  const { scrollY } = useScroll();
+  // Dock scale + blur as user scrolls past 400px
+  const dockScale = useTransform(scrollY, [0, 400], [1, 0.94]);
+  const dockBlur = useTransform(scrollY, [0, 400], [8, 18]);
 
   const isLight = theme === 'light';
 
@@ -144,15 +151,20 @@ export function Navigation({ onThemeToggle, theme }: NavigationProps) {
   return (
     <>
       <motion.nav
+        ref={navRef}
         className={cn(
           'fixed inset-x-0 top-0 z-50 transition-all duration-300',
           isScrolled || isMenuOpen ? 'nav-shell' : 'bg-transparent',
         )}
+        style={!prefersReducedMotion ? { scale: dockScale } : undefined}
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: prefersReducedMotion ? 0 : motionTokens.duration.base }}
       >
-        <div className="container-large">
+        <div 
+          className="container-large"
+          style={!prefersReducedMotion && isScrolled ? { backdropFilter: `blur(${dockBlur.get()}px)` } : undefined}
+        >
           <div className="flex h-[4rem] items-center justify-between gap-4">
             <a
               href="#hero"
@@ -175,7 +187,7 @@ export function Navigation({ onThemeToggle, theme }: NavigationProps) {
                     onClick={(event) => handleNavClick(event, link.href)}
                     aria-current={isActive ? 'page' : undefined}
                     className={cn(
-                      'focus-ring type-body relative rounded-lg px-3 py-1.5 text-sm font-medium transition-all duration-200',
+                      'focus-ring type-body relative rounded-lg px-3 py-2 text-sm font-semibold transition-all duration-200',
                     )}
                     style={{
                       color: isActive ? 'var(--text-100)' : 'var(--text-300)',
@@ -192,9 +204,9 @@ export function Navigation({ onThemeToggle, theme }: NavigationProps) {
                         layoutId="nav-active-pill"
                         className="absolute inset-0 rounded-lg"
                         style={{
-                          background: isLight ? 'rgba(37,99,235,0.08)' : 'rgba(255,255,255,0.05)',
+                          background: isLight ? 'rgba(230,81,0,0.08)' : 'rgba(255,255,255,0.05)',
                           border: isLight
-                            ? '1px solid rgba(37,99,235,0.20)'
+                            ? '1px solid rgba(230,81,0,0.20)'
                             : '1px solid rgba(255,255,255,0.10)',
                         }}
                         transition={{ type: 'spring', bounce: 0.22, duration: 0.4 }}
@@ -202,13 +214,13 @@ export function Navigation({ onThemeToggle, theme }: NavigationProps) {
                     )}
                     <span className="relative inline-flex items-center gap-2">
                       {link.label}
-                      {isActive && (
-                        <span
-                          className="h-1 w-1 rounded-full"
-                          style={{ background: 'var(--cyan-full)' }}
-                          aria-hidden="true"
-                        />
-                      )}
+                        {isActive && (
+                          <span
+                            className="h-1.5 w-1.5 rounded-full"
+                            style={{ background: 'var(--cyan-full)' }}
+                            aria-hidden="true"
+                          />
+                        )}
                     </span>
                   </a>
                 );
@@ -259,6 +271,8 @@ export function Navigation({ onThemeToggle, theme }: NavigationProps) {
                   href={navigationConfig.contactHref}
                   download={navigationConfig.contactDownloadName}
                   variant="primary"
+                  size="sm"
+                  className="px-[1.1rem] py-2 text-sm"
                   showIcon
                 >
                   {navigationConfig.contactLabel}
@@ -268,7 +282,7 @@ export function Navigation({ onThemeToggle, theme }: NavigationProps) {
               <button
                 type="button"
                 onClick={() => setIsMenuOpen((prev) => !prev)}
-                className="focus-ring inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg md:hidden"
+                className="focus-ring inline-flex h-11 w-11 min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-lg md:hidden"
                 style={{
                   border: '1px solid var(--border-dim)',
                   background: isLight ? 'rgba(255,255,255,0.88)' : 'rgba(10,10,10,0.78)',
@@ -287,14 +301,15 @@ export function Navigation({ onThemeToggle, theme }: NavigationProps) {
           </div>
         </div>
 
-        <div className="h-px w-full" style={{ background: 'var(--border-subtle)' }} aria-hidden="true">
+        <div className="w-full" style={{ height: '2px', background: 'var(--border-subtle)' }} aria-hidden="true">
           <div
-            className="h-full transition-[width] duration-150"
+            className="transition-[width] duration-150"
             style={{
+              height: '2px',
               width: `${Math.max(0, scrollProgress * 100)}%`,
               background: isLight
-                ? 'linear-gradient(90deg, var(--cyan-full), rgba(180,83,9,0.55))'
-                : 'linear-gradient(90deg, var(--cyan-full), rgba(139,92,246,0.55))',
+                ? 'linear-gradient(90deg, var(--cyan-full), rgba(201,169,97,0.70))'
+                : 'linear-gradient(90deg, var(--cyan-full), rgba(201,169,97,0.55))',
             }}
           />
         </div>
@@ -321,11 +336,18 @@ export function Navigation({ onThemeToggle, theme }: NavigationProps) {
               initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, x: 28 }}
               animate={{ opacity: 1, x: 0 }}
               exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, x: 18 }}
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.12}
+              onDragEnd={(_, info) => {
+                if (info.offset.x > 80) setIsMenuOpen(false);
+              }}
               transition={{
                 duration: prefersReducedMotion ? 0 : motionTokens.duration.base,
                 ease: motionTokens.ease.standard,
               }}
               onClick={(event) => event.stopPropagation()}
+              style={{ touchAction: 'pan-y' }}
             >
               <div className="mobile-overlay-header">
                 <a

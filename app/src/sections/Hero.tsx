@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useReducedMotion } from 'framer-motion';
+import { useReducedMotion, useScroll, useTransform, motion } from 'framer-motion';
 import {
   ArrowDown,
   ArrowRight,
@@ -16,6 +16,8 @@ import { GlowingEffect } from '@/components/ui/glowing-effect';
 import { useThemeContext } from '@/context/ThemeContext';
 import { LiquidWebGLBackground } from '@/components/ui/liquid-webgl-bg';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { SplineWithFallback } from '@/components/ui/spline';
+import { getHeroSceneUrl } from '@/config/spline';
 import anime from 'animejs';
 
 function useSpotlight(ref: React.RefObject<HTMLElement | null>, enabled: boolean) {
@@ -38,23 +40,28 @@ export function Hero() {
   const isMobile = useIsMobile();
   const lowPerformanceMode = shouldReduceMotion || isMobile;
   const cardRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const theme = useThemeContext();
   const isLight = theme === 'light';
   useSpotlight(cardRef, !lowPerformanceMode);
 
+  // Parallax for vCard on desktop scroll
+  const { scrollYProgress } = useScroll({
+    target: sectionRef as React.RefObject<HTMLElement>,
+    offset: ['start start', 'end start'],
+  });
+  const cardParallaxY = useTransform(scrollYProgress, [0, 1], [0, -40]);
+
   const titleParts = heroConfig.title.split('|').map((part) => part.trim()).filter(Boolean);
   const mobileHeroLabel = titleParts[0] ?? heroConfig.title;
-  const mobileRoles = heroConfig.roles.slice(0, 3);
   const mobileStats = heroConfig.metrics.slice(0, 3);
 
-  const particlePalette = isLight ? ['#1e40af', '#1d4ed8'] : ['#AEEBFF', '#22d3ee'];
+  const particlePalette = isLight ? ['#bf360c', '#e65100'] : ['#ffccbc', '#ff7043'];
 
   useEffect(() => {
     if (lowPerformanceMode) return;
 
-    const tl = anime.timeline({
-      easing: 'easeOutExpo',
-    });
+    const tl = anime.timeline({ easing: 'easeOutExpo' });
 
     tl.add({
       targets: '.hero-fade-up',
@@ -105,12 +112,12 @@ export function Hero() {
 
   if (!heroConfig.name) return null;
 
+  /* ─── MOBILE LAYOUT ─────────────────────────────────── */
   if (isMobile) {
     return (
       <section id="hero" className="hero-mobile-section relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0 bg-dot-grid opacity-[0.15]" aria-hidden="true" />
 
-        {/* Photo background panel */}
         <div className="hero-vcard-photo">
           <div className="hero-vcard-badge">Available 2026</div>
           <img
@@ -122,7 +129,6 @@ export function Hero() {
           />
         </div>
 
-        {/* Content panel */}
         <div className="hero-vcard-content">
           <div>
             <p className="hero-vcard-role">{mobileHeroLabel}</p>
@@ -131,7 +137,7 @@ export function Hero() {
 
           <p className="hero-vcard-intro">{heroConfig.intro}</p>
 
-          {/* 3-column stats ribbon */}
+          {/* Stats ribbon */}
           <div className="hero-vcard-stats" aria-label="Portfolio metrics">
             {mobileStats.map((metric) => (
               <div key={metric.label} className="hero-vcard-stat">
@@ -141,11 +147,9 @@ export function Hero() {
             ))}
           </div>
 
-          {/* Role chips */}
+          {/* Role chip */}
           <div className="hero-vcard-chips">
-            {mobileRoles.map((role) => (
-              <span key={role} className="hero-vcard-chip">{role}</span>
-            ))}
+            <span className="hero-vcard-chip">{heroConfig.roles[0]}</span>
           </div>
 
           <a href="#portfolio" className="hero-vcard-cta btn-primary focus-ring">
@@ -156,13 +160,28 @@ export function Hero() {
       </section>
     );
   }
+
+  /* ─── DESKTOP LAYOUT ─────────────────────────────────── */
   return (
     <section
+      ref={sectionRef}
       id="hero"
-      className="relative overflow-hidden pt-16 pb-6 sm:pt-20 lg:pt-24 lg:pb-8"
+      className="relative overflow-hidden pt-16 pb-10 sm:pt-20 sm:pb-12 lg:pt-24 lg:pb-14"
       style={{ perspective: '1200px' }}
     >
       {!lowPerformanceMode && <LiquidWebGLBackground />}
+
+      {/* 3D Spline Background */}
+      {!lowPerformanceMode && (
+        <div className="absolute inset-0 pointer-events-none z-0 opacity-25">
+          <SplineWithFallback
+            scene={getHeroSceneUrl()}
+            fallback={<div className="h-full w-full" />}
+            className="h-full w-full"
+            containerClassName="h-full w-full"
+          />
+        </div>
+      )}
 
       <div className="pointer-events-none absolute inset-0 bg-dot-grid opacity-[0.25]" aria-hidden="true" />
       <div
@@ -171,7 +190,8 @@ export function Hero() {
       />
 
       <div className="container-large relative z-10">
-        <div className="grid items-start gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:gap-10 xl:gap-12">
+        <div className="grid items-start gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-center lg:gap-8 xl:gap-10">
+          {/* ── Left column ── */}
           <div className="flex flex-col gap-4">
             <div className={shouldReduceMotion ? '' : 'hero-fade-up opacity-0'}>
               <span className="section-eyebrow">
@@ -216,15 +236,17 @@ export function Hero() {
               {heroConfig.intro}
             </p>
 
-            <div className="flex flex-wrap gap-2">
-              {heroConfig.roles.map((role) => (
-                <span key={role} className={`tech-tag ${lowPerformanceMode ? '' : 'hero-tag opacity-0'}`}>
-                  {role}
-                </span>
-              ))}
+            {/* Role tag */}
+            <div className="flex flex-wrap items-center gap-2">
+              <span
+                className={`tech-tag ${lowPerformanceMode ? '' : 'hero-tag opacity-0'}`}
+                style={{ minWidth: '15rem' }}
+              >
+                {heroConfig.roles[0]}
+              </span>
             </div>
 
-            <div className="mt-2 grid gap-3 sm:flex sm:flex-wrap sm:items-center">
+            <div className="mt-4 flex flex-col flex-wrap gap-3 sm:flex-row">
               <a
                 href="#portfolio"
                 className={`w-full sm:w-auto ${lowPerformanceMode ? '' : 'btn-magnetic opacity-0'}`}
@@ -255,8 +277,9 @@ export function Hero() {
               </a>
             </div>
 
-            <div className={`proof-ribbon mt-2 backdrop-blur-sm ${lowPerformanceMode ? '' : 'hero-fade-up opacity-0'}`}>
-              {proofConfig.highlights.slice(0, 3).map((metric) => (
+            {/* Proof ribbon */}
+            <div className={`proof-ribbon mt-4 backdrop-blur-sm ${lowPerformanceMode ? '' : 'hero-fade-up opacity-0'}`}>
+              {proofConfig.highlights.slice(0, 4).map((metric) => (
                 <div key={metric.label} className="proof-ribbon-item">
                   <p className="proof-ribbon-value">{metric.value}</p>
                   <p className="proof-ribbon-label">{metric.label}</p>
@@ -265,27 +288,29 @@ export function Hero() {
             </div>
           </div>
 
-          <aside
+          {/* ── vCard aside — parallax on desktop ── */}
+          <motion.aside
+            style={lowPerformanceMode ? undefined : { y: cardParallaxY }}
             className={`relative mx-auto w-full max-w-[18rem] lg:max-w-none origin-center ${
               lowPerformanceMode ? '' : 'hero-card-wrapper opacity-0'
             }`}
           >
             <div
               className="pointer-events-none absolute -inset-4 rounded-[2.5rem] opacity-30 transition-opacity duration-1000"
-              style={{ background: 'radial-gradient(circle at 50% 80%, rgba(34,211,238,0.18), transparent 70%)' }}
+              style={{ background: 'radial-gradient(circle at 50% 80%, rgba(255,112,67,0.18), transparent 70%)' }}
               aria-hidden="true"
             />
 
             <div
               ref={cardRef}
-              className="card-spotlight surface-card relative overflow-hidden rounded-[1.6rem] p-3.5 sm:p-4 shadow-2xl bg-[var(--bg-surface)] backdrop-blur-sm"
+              className="card-spotlight surface-card relative overflow-hidden rounded-[1.6rem] bg-[var(--bg-surface)] p-4 shadow-2xl backdrop-blur-sm sm:p-5"
             >
               <div
                 className="absolute inset-x-0 top-0 h-px"
                 style={{
                   background: isLight
-                    ? 'linear-gradient(90deg, transparent, rgba(37,99,235,0.22) 30%, rgba(180,83,9,0.18) 70%, transparent)'
-                    : 'linear-gradient(90deg, transparent, rgba(34,211,238,0.3) 30%, rgba(139,92,246,0.2) 70%, transparent)',
+                    ? 'linear-gradient(90deg, transparent, rgba(230,81,0,0.22) 30%, rgba(201,169,97,0.18) 70%, transparent)'
+                    : 'linear-gradient(90deg, transparent, rgba(255,112,67,0.3) 30%, rgba(201,169,97,0.2) 70%, transparent)',
                 }}
                 aria-hidden="true"
               />
@@ -300,18 +325,18 @@ export function Hero() {
                 />
               )}
 
-              <div className="relative z-10 flex flex-col gap-3">
+              <div className="relative z-10 flex flex-col gap-4">
                 <div
                   className="group relative isolate overflow-hidden rounded-2xl"
                   style={
                     isLight
                       ? {
-                          border: '1px solid rgba(37,99,235,0.3)',
-                          boxShadow: '0 0 0 1px rgba(37,99,235,0.4), 0 0 20px rgba(37,99,235,0.15)',
+                          border: '1px solid rgba(230,81,0,0.3)',
+                          boxShadow: '0 0 0 1px rgba(230,81,0,0.4), 0 0 20px rgba(230,81,0,0.15)',
                         }
                       : {
-                          border: '1px solid rgba(34,211,238,0.5)',
-                          boxShadow: '0 0 0 1px rgba(34,211,238,0.6), 0 0 40px rgba(34,211,238,0.25)',
+                          border: '1px solid rgba(255,112,67,0.5)',
+                          boxShadow: '0 0 0 1px rgba(255,112,67,0.6), 0 0 40px rgba(255,112,67,0.25)',
                         }
                   }
                 >
@@ -336,15 +361,15 @@ export function Hero() {
                   />
                 </div>
 
-                <div className="grid gap-1.5">
-                  <div className="surface-soft flex items-start gap-3 rounded-xl px-3 py-2 bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-sm">
+                <div className="grid gap-2">
+                  <div className="surface-soft flex items-start gap-3 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-3 py-2.5 shadow-sm">
                     <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[var(--cyan-full)]" aria-hidden="true" />
                     <div>
                       <p className="text-sm font-semibold text-[var(--text-100)]">Location</p>
                       <p className="text-sm text-[var(--text-300)]">{heroConfig.location}</p>
                     </div>
                   </div>
-                  <div className="surface-soft flex items-start gap-3 rounded-xl px-3 py-2 bg-[var(--bg-elevated)] border border-[var(--border-subtle)] shadow-sm">
+                  <div className="surface-soft flex items-start gap-3 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-3 py-2.5 shadow-sm">
                     <BriefcaseBusiness className="mt-0.5 h-4 w-4 shrink-0 text-[var(--cyan-full)]" aria-hidden="true" />
                     <div>
                       <p className="text-sm font-semibold text-[var(--text-100)]">Availability</p>
@@ -352,9 +377,21 @@ export function Hero() {
                     </div>
                   </div>
                 </div>
+
+                <div className="grid gap-2">
+                  {heroConfig.spotlightItems.map((item) => (
+                    <div
+                      key={item.label}
+                      className="flex flex-col gap-1.5 rounded-xl border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-3.5 py-3"
+                    >
+                      <p className="type-meta text-[0.58rem] font-bold text-[var(--cyan-full)]">{item.label}</p>
+                      <p className="text-sm leading-relaxed text-[var(--text-200)]">{item.value}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </aside>
+          </motion.aside>
         </div>
       </div>
     </section>

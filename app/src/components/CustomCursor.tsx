@@ -99,9 +99,9 @@ export function CustomCursor() {
                     opacity: isVisible ? 1 : 0,
                     width: RING_SIZE,
                     height: RING_SIZE,
-                    border: `1.5px solid ${isHovering ? 'rgba(34,211,238,0.9)' : 'rgba(255,255,255,0.4)'}`,
-                    background: isHovering ? 'rgba(34,211,238,0.06)' : 'transparent',
-                    boxShadow: isHovering ? '0 0 16px rgba(34,211,238,0.25)' : 'none',
+                    border: `1.5px solid ${isHovering ? 'rgba(255,112,67,0.9)' : 'rgba(255,255,255,0.4)'}`,
+                    background: isHovering ? 'rgba(255,112,67,0.06)' : 'transparent',
+                    boxShadow: isHovering ? '0 0 16px rgba(255,112,67,0.25)' : 'none',
                     transition: 'width 0.2s ease, height 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease',
                 }}
             />
@@ -116,7 +116,7 @@ export function CustomCursor() {
                     opacity: isVisible ? 1 : 0,
                     width: DOT_SIZE,
                     height: DOT_SIZE,
-                    background: isHovering ? 'rgba(34,211,238,0.0)' : 'rgba(255,255,255,0.9)',
+                    background: isHovering ? 'rgba(255,112,67,0.0)' : 'rgba(255,255,255,0.9)',
                     transition: 'width 0.15s ease, height 0.15s ease, background 0.15s ease',
                 }}
             />

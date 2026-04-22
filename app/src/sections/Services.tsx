@@ -1,32 +1,31 @@
 import { useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import {
-  ArrowUpRight,
-  ChevronDown,
-  Brain,
-  Circle,
-  CloudCog,
-  Code2,
-  ShieldCheck,
-  Sparkles,
-} from 'lucide-react';
-import { servicesConfig } from '@/config';
+import { ArrowUpRight, Brain, ChevronDown, Circle, CloudCog, Code2, ShieldCheck, Sparkles } from 'lucide-react';
+import { brandConfig, servicesConfig } from '@/config';
 import { AnimatedText } from '@/components/AnimatedText';
 import { motionTokens } from '@/lib/motion';
+import { TiltCard } from '@/components/ui/tilt-card';
+import { LazySpline } from '@/components/ui/spline';
+import { getServicesSceneUrl } from '@/config/spline';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 function renderServiceIcon(iconName: string, className: string) {
   const props = { className, 'aria-hidden': true as const };
   switch (iconName) {
-    case 'Brain':
-      return <Brain {...props} />;
-    case 'Code2':
-      return <Code2 {...props} />;
-    case 'ShieldCheck':
-      return <ShieldCheck {...props} />;
-    case 'CloudCog':
-      return <CloudCog {...props} />;
-    default:
-      return <Circle {...props} />;
+    case 'Brain':     return <Brain {...props} />;
+    case 'Code2':     return <Code2 {...props} />;
+    case 'ShieldCheck': return <ShieldCheck {...props} />;
+    case 'CloudCog':  return <CloudCog {...props} />;
+    default:          return <Circle {...props} />;
+  }
+}
+
+/** Maps service icon names to their animated CSS class + description hint */
+function serviceIconAnimClass(iconName: string) {
+  switch (iconName) {
+    case 'Brain':    return 'service-icon-brain';
+    case 'CloudCog': return 'service-icon-cloudcog';
+    default:         return '';
   }
 }
 
@@ -41,8 +40,6 @@ function useSpotlight(ref: React.RefObject<HTMLElement | null>) {
   return { onMouseMove };
 }
 
-const BENTO_SIZES = ['lg:col-span-2', 'lg:col-span-1', 'lg:col-span-1', 'lg:col-span-2'];
-
 const SERVICE_IMAGES = [
   '/images/service-ai.png',
   '/images/service-frontend.png',
@@ -50,25 +47,19 @@ const SERVICE_IMAGES = [
   '/images/service-cloud.png',
 ];
 
-// Per-image tint overlay so each card has its own color mood
 const SERVICE_TINTS = [
-  'rgba(34,211,238,0.10)',   // AI — cyan mist
-  'rgba(139,92,246,0.10)',   // Frontend — violet mist
-  'rgba(244,63,94,0.10)',    // Security — rose mist
-  'rgba(34,211,238,0.08)',   // Cloud — cyan mist
+  'rgba(255,112,67,0.10)',
+  'rgba(201,169,97,0.10)',
+  'rgba(255,112,67,0.08)',
+  'rgba(201,169,97,0.08)',
 ];
 
-function ServiceVisual({ index, iconName, isFeatured }: { index: number; iconName: string; isFeatured: boolean }) {
+function ServiceVisual({ index, iconName }: { index: number; iconName: string }) {
   const img = SERVICE_IMAGES[index % SERVICE_IMAGES.length];
   const tint = SERVICE_TINTS[index % SERVICE_TINTS.length];
-  const heightClass = isFeatured ? 'h-32 sm:h-36' : 'h-24 sm:h-28';
 
   return (
-    <div
-      className={`service-visual-card relative overflow-hidden ${heightClass}`}
-      style={{ borderBottom: '1px solid var(--border-subtle)' }}
-    >
-      {/* Background photo */}
+    <div className="service-visual-card relative h-32 overflow-hidden" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
       <img
         src={img}
         alt=""
@@ -77,35 +68,23 @@ function ServiceVisual({ index, iconName, isFeatured }: { index: number; iconNam
         style={{ opacity: 0.55 }}
         loading="lazy"
       />
-
-      {/* Dark scrim so card text stays readable */}
       <div
         className="absolute inset-0"
-        style={{
-          background: `linear-gradient(160deg, rgba(6,6,10,0.72) 0%, rgba(6,6,10,0.46) 60%, rgba(6,6,10,0.20) 100%)`,
-        }}
+        style={{ background: 'linear-gradient(160deg, rgba(6,6,10,0.72) 0%, rgba(6,6,10,0.46) 60%, rgba(6,6,10,0.20) 100%)' }}
         aria-hidden="true"
       />
+      <div className="absolute inset-0" style={{ background: tint, mixBlendMode: 'screen' }} aria-hidden="true" />
 
-      {/* Colour tint layer for brand identity */}
       <div
-        className="absolute inset-0"
-        style={{ background: tint, mixBlendMode: 'screen' }}
-        aria-hidden="true"
-      />
-
-      {/* SIGNAL label — top-left */}
-      <div
-        className="absolute left-5 top-5 flex items-center gap-2 text-xs uppercase tracking-[0.14em] z-10"
+        className="absolute left-5 top-5 z-10 flex items-center gap-2 text-xs uppercase tracking-[0.14em]"
         style={{ color: 'var(--cyan-dim)' }}
       >
-        {renderServiceIcon(iconName, 'h-4 w-4')}
+        {renderServiceIcon(iconName, `h-4 w-4 shrink-0 ${serviceIconAnimClass(iconName)}`)}
         Signal
       </div>
 
-      {/* Number badge — top-right */}
       <span
-        className="absolute right-4 top-4 rounded-full px-2 py-1 font-mono text-[0.62rem] z-10"
+        className="absolute right-4 top-4 z-10 rounded-full px-2 py-1 font-mono text-[0.62rem]"
         style={{
           border: '1px solid var(--border-accent)',
           background: 'rgba(6,6,10,0.72)',
@@ -116,9 +95,8 @@ function ServiceVisual({ index, iconName, isFeatured }: { index: number; iconNam
         0{index + 1}
       </span>
 
-      {/* Top accent line */}
       <div
-        className="absolute inset-x-0 top-0 h-px z-10"
+        className="absolute inset-x-0 top-0 z-10 h-px rounded-t-2xl"
         style={{ background: 'linear-gradient(90deg, transparent, var(--border-accent) 50%, transparent)' }}
         aria-hidden="true"
       />
@@ -130,14 +108,15 @@ function ServiceCard({
   service,
   index,
   shouldReduceMotion,
+  featured = false,
 }: {
   service: (typeof servicesConfig.services)[number];
   index: number;
   shouldReduceMotion: boolean | null;
+  featured?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const { onMouseMove } = useSpotlight(ref);
-  const isFeatured = BENTO_SIZES[index % BENTO_SIZES.length].includes('col-span-2');
 
   return (
     <motion.article
@@ -145,35 +124,51 @@ function ServiceCard({
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, margin: '-60px' }}
       transition={shouldReduceMotion ? { duration: 0 } : { ...motionTokens.spring.soft, delay: index * 0.06 }}
-      className={`group card-spotlight glass-card relative flex flex-col overflow-hidden rounded-2xl ${BENTO_SIZES[index % BENTO_SIZES.length]}`}
+      className={`group card-spotlight glass-card relative flex h-full flex-col overflow-hidden rounded-2xl transition-all duration-300 hover:border-[var(--border-bright)] ${
+        featured ? 'bento-featured' : ''
+      }`}
       ref={ref}
       onMouseMove={onMouseMove}
+      whileHover={shouldReduceMotion ? undefined : { y: -2 }}
     >
-      <ServiceVisual index={index} iconName={service.iconName} isFeatured={isFeatured} />
+      <ServiceVisual index={index} iconName={service.iconName} />
 
-      <div className="relative z-10 flex flex-1 flex-col gap-3 p-4 sm:p-5">
+      <div className="relative z-10 flex flex-1 flex-col gap-3 p-5 sm:p-6">
         <div className="flex items-center gap-3">
           <span
-            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+            className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition-transform duration-300 group-hover:scale-110 ${serviceIconAnimClass(service.iconName)}`}
             style={{
               border: '1px solid var(--border-dim)',
               background: 'var(--cyan-glow)',
               color: 'var(--cyan-full)',
             }}
           >
-            {renderServiceIcon(service.iconName, 'h-4 w-4')}
+            {renderServiceIcon(service.iconName, 'h-4 w-4 shrink-0')}
           </span>
-          <h3 className="type-heading text-sm font-semibold" style={{ color: 'var(--text-100)' }}>{service.title}</h3>
+          <h3 className="type-heading text-sm font-semibold text-[var(--text-100)]">{service.title}</h3>
         </div>
 
-        <p className="type-body flex-1 text-sm leading-[1.55]" style={{ color: 'var(--text-200)' }}>{service.description}</p>
+        <p className="type-body text-sm leading-relaxed text-[var(--text-200)]">{service.description}</p>
 
-        <p className="type-body text-xs leading-relaxed" style={{ color: 'var(--text-300)' }}>Outcome: {service.outcomes}</p>
+        {/* Outcomes — expand on hover */}
+        <motion.p
+          className="type-body text-sm leading-relaxed text-[var(--text-300)] overflow-hidden"
+          initial={{ maxHeight: '2.5rem' }}
+          whileHover={shouldReduceMotion ? undefined : { maxHeight: '8rem' }}
+          transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
+        >
+          Outcome: {service.outcomes}
+        </motion.p>
 
-        <a href="#contact" className="btn-outline focus-ring mt-auto inline-flex min-h-[46px] items-center justify-between gap-2 text-sm">
-          Discuss Implementation
-          <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
-        </a>
+        <div className="mt-auto pt-4">
+          <a
+            href={brandConfig.recruiterCtaHref}
+            className="btn-outline focus-ring inline-flex min-h-[46px] w-full items-center justify-between gap-2 text-sm"
+          >
+            Discuss Implementation
+            <ArrowUpRight className="h-4 w-4 shrink-0" aria-hidden="true" />
+          </a>
+        </div>
       </div>
     </motion.article>
   );
@@ -181,6 +176,7 @@ function ServiceCard({
 
 export function Services() {
   const shouldReduceMotion = useReducedMotion();
+  const isMobile = useIsMobile();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   if (!servicesConfig.heading && servicesConfig.services.length === 0) return null;
@@ -188,20 +184,35 @@ export function Services() {
   return (
     <section id="services" className="section-shell relative overflow-hidden">
       <div
-        className="ambient-blob pointer-events-none absolute top-1/2 -left-40 -translate-y-1/2 h-[620px] w-[480px] opacity-[0.05] rounded-full"
-        style={{ background: 'radial-gradient(circle, #22d3ee, transparent 65%)', filter: 'blur(110px)' }}
+        className="ambient-blob pointer-events-none absolute top-1/2 -left-40 h-[620px] w-[480px] -translate-y-1/2 rounded-full opacity-[0.05]"
+        style={{ background: 'radial-gradient(circle, #ff7043, transparent 65%)', filter: 'blur(110px)' }}
         aria-hidden="true"
       />
       <div
-        className="ambient-blob pointer-events-none absolute bottom-0 right-0 h-[460px] w-[460px] opacity-[0.05] rounded-full"
-        style={{ background: 'radial-gradient(circle, #8b5cf6, transparent 65%)', filter: 'blur(95px)', animationDelay: '5s' }}
+        className="ambient-blob pointer-events-none absolute bottom-0 right-0 h-[460px] w-[460px] rounded-full opacity-[0.05]"
+        style={{ background: 'radial-gradient(circle, #c9a961, transparent 65%)', filter: 'blur(95px)', animationDelay: '5s' }}
         aria-hidden="true"
       />
+      
+      {/* 3D Services Background */}
+      {!shouldReduceMotion && !isMobile && (
+        <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+          <LazySpline
+            scene={getServicesSceneUrl()}
+            fallback={<div className="h-full w-full" />}
+            className="h-full w-full opacity-10"
+            containerClassName="h-full w-full"
+            rootMargin="220px"
+          />
+        </div>
+      )}
+      
+      
 
       <div className="container-large relative z-10">
-        <div className="section-header">
+        <div className="section-header items-start text-left">
           <span className="section-eyebrow">
-            <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
+            <Sparkles className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             {servicesConfig.label}
           </span>
           <AnimatedText
@@ -210,13 +221,13 @@ export function Services() {
             type="words"
             className="section-title max-w-3xl text-balance"
           />
-          <p className="section-copy type-body">{servicesConfig.description}</p>
+          <p className="section-copy type-body max-w-2xl">{servicesConfig.description}</p>
         </div>
 
-        {/* Mobile: accordion. Desktop: bento grid */}
-        <div className="sm:grid sm:grid-cols-2 sm:gap-2.5 lg:grid-cols-3 space-y-2 sm:space-y-0">
+        {/* ── Mobile accordion ── */}
+        <div className="mt-8 space-y-3 sm:hidden sm:mt-10">
           {servicesConfig.services.map((service, index) => {
-            const accentColors = ['var(--cyan-full)', '#8b5cf6', '#f43f5e', 'var(--cyan-dim)'];
+            const accentColors = ['var(--cyan-full)', 'var(--violet)', 'var(--cyan-dim)', 'var(--violet)'];
             const accent = accentColors[index % accentColors.length];
             const isOpen = openIndex === index;
 
@@ -226,42 +237,77 @@ export function Services() {
                 initial={{ opacity: 0, y: 24, scale: 0.98 }}
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 viewport={{ once: true, margin: '-60px' }}
-                transition={shouldReduceMotion ? { duration: 0 } : { delay: index * 0.06, duration: 0.4, ease: [0.22,1,0.36,1] }}
+                transition={shouldReduceMotion ? { duration: 0 } : { delay: index * 0.06, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                whileTap={shouldReduceMotion ? undefined : { scale: 0.985 }}
               >
-                {/* Mobile accordion card */}
-                <div className={`service-accordion-card sm:hidden${isOpen ? ' open' : ''}`}>
+                <div className={`service-accordion-card${isOpen ? ' open' : ''}`}>
                   <div className="service-accent-bar" style={{ background: accent }} />
                   <button
                     className="service-accordion-header"
-                    onClick={() => setOpenIndex(isOpen ? null : index)}
+                    onClick={() => {
+                      const next = isOpen ? null : index;
+                      setOpenIndex(next);
+                      if (next !== null) {
+                        // Scroll into view on accordion open
+                        setTimeout(() => {
+                          const el = document.getElementById(`service-body-${next}`);
+                          if (el) {
+                            const top = el.getBoundingClientRect().top + window.scrollY - 100;
+                            window.scrollTo({ top, behavior: 'smooth' });
+                          }
+                        }, 60);
+                      }
+                    }}
                     aria-expanded={isOpen}
                     aria-controls={`service-body-${index}`}
                   >
                     <span className="service-accordion-icon">
-                      {renderServiceIcon(service.iconName, 'h-4 w-4')}
+                      {renderServiceIcon(service.iconName, 'h-4 w-4 shrink-0')}
                     </span>
                     <span className="service-accordion-title">{service.title}</span>
                     <span className="service-accordion-number">0{index + 1}</span>
                     <ChevronDown className={`service-accordion-chevron${isOpen ? ' open' : ''}`} aria-hidden="true" />
                   </button>
-                  <div
-                    id={`service-body-${index}`}
-                    className={`service-accordion-body${isOpen ? ' open' : ''}`}
-                  >
-                    <p className="text-sm leading-relaxed mb-3" style={{ color: 'var(--text-200)' }}>{service.description}</p>
-                    <p className="text-xs leading-relaxed mb-4" style={{ color: 'var(--text-300)' }}>Outcome: {service.outcomes}</p>
-                    <a href="#contact" className="btn-outline focus-ring inline-flex w-full min-h-[44px] items-center justify-between gap-2 text-sm">
+                  <div id={`service-body-${index}`} className={`service-accordion-body${isOpen ? ' open' : ''}`}>
+                    <p className="mb-3 text-sm leading-relaxed text-[var(--text-200)]">{service.description}</p>
+                    <p className="mb-4 text-sm leading-relaxed text-[var(--text-300)]">Outcome: {service.outcomes}</p>
+                    <a
+                      href={brandConfig.recruiterCtaHref}
+                      className="btn-outline focus-ring inline-flex w-full min-h-[44px] items-center justify-between gap-2 text-sm"
+                    >
                       Discuss Implementation
-                      <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+                      <ArrowUpRight className="h-4 w-4 shrink-0" aria-hidden="true" />
                     </a>
                   </div>
                 </div>
-
-                {/* Desktop card (bento) */}
-                <ServiceCard service={service} index={index} shouldReduceMotion={shouldReduceMotion ?? false} />
               </motion.div>
             );
           })}
+        </div>
+
+        {/* ── Desktop: 4 cards in one row side by side ── */}
+        <div
+          className="mt-8 hidden sm:grid sm:mt-10"
+          style={{
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            gap: '1.25rem',
+          }}
+        >
+          {servicesConfig.services.map((service, index) => (
+            <TiltCard
+              key={service.title}
+              maxTilt={4}
+              scale={1.015}
+              disabled={Boolean(shouldReduceMotion)}
+              className="h-full"
+            >
+              <ServiceCard
+                service={service}
+                index={index}
+                shouldReduceMotion={shouldReduceMotion}
+              />
+            </TiltCard>
+          ))}
         </div>
       </div>
     </section>
