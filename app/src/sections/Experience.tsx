@@ -92,7 +92,7 @@ function ExperienceCard({
           : { delay: index * 0.06, duration: 0.34, ease: motionTokens.ease.standard }
       }
       whileHover={shouldReduceMotion ? undefined : { y: -4 }}
-      className="group relative flex h-full min-h-[21rem] flex-col overflow-hidden rounded-[1.4rem] border p-5 shadow-[0_18px_44px_-34px_rgba(0,0,0,0.85)] sm:p-6"
+      className="group relative flex h-full min-h-[19.5rem] flex-col overflow-hidden rounded-[1.4rem] border p-5 shadow-[0_18px_44px_-34px_rgba(0,0,0,0.85)] sm:p-6"
       style={{
         borderColor: 'var(--border-subtle)',
         background: 'linear-gradient(165deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015))',
@@ -110,14 +110,14 @@ function ExperienceCard({
       />
 
       <div className="relative z-10 flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3">
+        <div className="flex min-w-0 items-center gap-3">
           <div
             className="inline-flex h-10 w-10 items-center justify-center rounded-xl border"
             style={{ borderColor: 'var(--border-accent)', background: 'var(--cyan-glow)', color: 'var(--cyan-full)' }}
           >
             <Briefcase className="h-4 w-4" aria-hidden="true" />
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-[0.62rem] font-bold uppercase tracking-[0.18em] text-[var(--text-400)]">
               Experience {cardNumber}
             </p>
@@ -128,16 +128,16 @@ function ExperienceCard({
         </div>
 
         <div
-          className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[0.68rem] font-medium"
+          className="inline-flex max-w-[48%] items-center gap-1.5 rounded-full border px-3 py-1 text-[0.68rem] font-medium"
           style={{ borderColor: 'var(--border-subtle)', background: 'var(--bg-elevated)', color: 'var(--text-300)' }}
         >
           <MapPin className="h-3.5 w-3.5 shrink-0 text-[var(--cyan-dim)]" aria-hidden="true" />
-          <span className="leading-none">{item.location}</span>
+          <span className="min-w-0 truncate leading-none">{item.location}</span>
         </div>
       </div>
 
       <div className="relative z-10 mt-5">
-        <h3 className="type-heading text-xl font-bold tracking-tight text-[var(--text-100)]">
+        <h3 className="type-heading break-words text-[1.12rem] font-bold tracking-tight text-[var(--text-100)] sm:text-xl">
           {item.company}
         </h3>
         <p className="mt-2 text-sm font-semibold leading-relaxed text-[var(--text-200)]">
@@ -147,9 +147,9 @@ function ExperienceCard({
 
       <ul className="relative z-10 mt-5 space-y-3">
         {item.highlights.map((highlight) => (
-          <li key={highlight} className="flex items-start gap-3 text-sm leading-relaxed text-[var(--text-300)]">
+          <li key={highlight} className="flex min-w-0 items-start gap-3 text-sm leading-relaxed text-[var(--text-300)]">
             <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--cyan-dim)]" aria-hidden="true" />
-            <span>{highlight}</span>
+            <span className="min-w-0 break-words">{highlight}</span>
           </li>
         ))}
       </ul>

@@ -2,6 +2,7 @@ import { useState, useEffect, type ReactNode } from 'react';
 import { SplineScene, SplineSceneFallback } from './spline-scene';
 import { checkWebGLSupport } from '@/utils/3d';
 import { useSplineLazyLoad } from '@/hooks/useSplineLazyLoad';
+import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 
 interface LazySplineProps {
   scene: string;
@@ -25,13 +26,14 @@ export function LazySpline({
   style,
 }: LazySplineProps) {
   const [hasWebGL, setHasWebGL] = useState(false);
+  const { shouldLoad3D } = useDeviceCapabilities();
   const { ref, shouldLoad } = useSplineLazyLoad({ threshold, rootMargin });
 
   useEffect(() => {
     setHasWebGL(checkWebGLSupport());
   }, []);
 
-  if (!hasWebGL || !scene) {
+  if (!shouldLoad3D || !hasWebGL || !scene) {
     return <>{fallback ?? null}</>;
   }
 

@@ -32,14 +32,6 @@ const brandColorMapLight: Record<string, string> = {
   Clerk: '#7c3aed',
 };
 
-const explorerPositions = [
-  { x: -188, y: -42, rotateX: 18, rotateY: -16, floatY: -4 },
-  { x: -122, y: 78, rotateX: 10, rotateY: -10, floatY: 6 },
-  { x: 0, y: -102, rotateX: 20, rotateY: 0, floatY: -6 },
-  { x: 126, y: 78, rotateX: 10, rotateY: 12, floatY: 5 },
-  { x: 194, y: -16, rotateX: 16, rotateY: 16, floatY: -5 },
-] as const;
-
 function brandColor(name: string, index: number, isLight: boolean) {
   const map = isLight ? brandColorMapLight : brandColorMapDark;
   const fallbacksDark = ['#ff7043', '#ffb300', '#c9a961', '#ffd54f', '#ff6e40', '#e8a838'];
@@ -68,7 +60,7 @@ function LogoChip({
       viewport={{ once: true, margin: '-20px' }}
       transition={shouldReduceMotion ? { duration: 0 } : { delay: idx * 0.03, duration: 0.28, ease: motionTokens.ease.standard }}
       whileHover={shouldReduceMotion ? undefined : { y: -2, scale: 1.02 }}
-      className="group flex min-h-[3rem] items-center justify-center gap-2 rounded-xl border px-4 py-3 text-center shadow-sm transition-colors"
+      className="group flex min-h-[3rem] min-w-[8.5rem] basis-[9.5rem] flex-none items-center justify-center gap-2 rounded-xl border px-4 py-3 text-center shadow-sm transition-colors"
       style={{
         borderColor: 'var(--border-subtle)',
         background: 'linear-gradient(165deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015))',
@@ -82,74 +74,6 @@ function LogoChip({
         {logo.name}
       </span>
     </motion.div>
-  );
-}
-
-function ExplorerNode({
-  item,
-  index,
-  isLight,
-  shouldReduceMotion,
-}: {
-  item: { name: string; description: string; impact: string };
-  index: number;
-  isLight: boolean;
-  shouldReduceMotion: boolean | null;
-}) {
-  const position = explorerPositions[index] ?? explorerPositions[explorerPositions.length - 1];
-  const accent = brandColor(item.name, index, isLight);
-
-  return (
-    <div
-      className="absolute left-1/2 top-1/2"
-      style={{
-        transform: `translate(${position.x}px, ${position.y}px)`,
-      }}
-    >
-      <motion.div
-        initial={shouldReduceMotion ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0, scale: 0.92, y: 16 }}
-        animate={shouldReduceMotion ? { opacity: 1, scale: 1, y: 0 } : { opacity: 1, scale: 1, y: 0 }}
-        transition={shouldReduceMotion ? { duration: 0 } : { delay: index * 0.05, duration: 0.32, ease: motionTokens.ease.standard }}
-      >
-        <motion.div
-          className="w-[9rem] rounded-2xl border px-3 py-3 shadow-[0_18px_40px_-26px_rgba(0,0,0,0.7)] sm:w-[10rem]"
-          style={{
-            borderColor: 'var(--border-dim)',
-            background: 'linear-gradient(165deg, rgba(255,255,255,0.08), rgba(255,255,255,0.025))',
-            transform: `rotateX(${position.rotateX}deg) rotateY(${position.rotateY}deg)`,
-            transformStyle: 'preserve-3d',
-            willChange: 'transform',
-          }}
-          animate={
-            shouldReduceMotion
-              ? undefined
-              : {
-                  y: [0, position.floatY, 0],
-                }
-          }
-          transition={
-            shouldReduceMotion
-              ? undefined
-              : {
-                  duration: 4.2 + index * 0.35,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }
-          }
-          whileHover={shouldReduceMotion ? undefined : { y: -6, scale: 1.03 }}
-        >
-          <p className="text-[0.54rem] font-bold uppercase tracking-[0.18em]" style={{ color: accent }}>
-            Stack node
-          </p>
-          <p className="mt-2 type-heading text-sm font-semibold leading-tight text-[var(--text-100)]">
-            {item.name}
-          </p>
-          <p className="mt-2 text-[0.68rem] leading-relaxed text-[var(--text-300)] line-clamp-3">
-            {item.impact}
-          </p>
-        </motion.div>
-      </motion.div>
-    </div>
   );
 }
 
@@ -202,7 +126,7 @@ export function TechStack() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.3, ease: motionTokens.ease.standard }}
-          className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5"
+          className="mt-8 flex flex-wrap justify-center gap-3"
         >
           {techStackConfig.logos.map((logo, idx) => (
             <LogoChip
@@ -242,11 +166,11 @@ export function TechStack() {
           </div>
 
           <div
-            className="relative h-[15rem] overflow-hidden sm:h-[17rem]"
+            className="relative min-h-[22rem] overflow-hidden sm:min-h-[24rem] lg:min-h-[26rem]"
             style={{
               backgroundImage:
                 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)',
-              backgroundSize: '34px 34px',
+                backgroundSize: '34px 34px',
             }}
           >
             <div
@@ -263,7 +187,7 @@ export function TechStack() {
               initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.28, ease: motionTokens.ease.standard }}
-              className="absolute left-1/2 top-1/2 w-[10rem] -translate-x-1/2 -translate-y-1/2 rounded-[1.6rem] border border-[var(--border-dim)] px-4 py-4 text-center shadow-[0_24px_60px_-34px_rgba(0,0,0,0.8)]"
+              className="mx-auto w-full max-w-[18rem] rounded-[1.6rem] border border-[var(--border-dim)] px-4 py-4 text-center shadow-[0_24px_60px_-34px_rgba(0,0,0,0.8)]"
               style={{
                 background: 'linear-gradient(165deg, rgba(10,10,10,0.7), rgba(24,24,24,0.45))',
                 backdropFilter: 'blur(10px)',
@@ -280,36 +204,36 @@ export function TechStack() {
               </p>
             </motion.div>
 
-            {!isMobile &&
-              explorerItems.map((item, index) => (
-                <ExplorerNode
-                  key={`${activeGroup.id}-${item.name}`}
-                  item={item}
-                  index={index}
-                  isLight={isLight}
-                  shouldReduceMotion={shouldReduceMotion}
-                />
-              ))}
-
-            {isMobile && (
-              <div className="absolute inset-x-4 bottom-4 grid grid-cols-2 gap-2">
-                {explorerItems.slice(0, 4).map((item) => (
-                  <div
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
+              {explorerItems.map((item, index) => {
+                const accent = brandColor(item.name, index, isLight);
+                return (
+                  <motion.div
                     key={`${activeGroup.id}-${item.name}`}
-                    className="rounded-xl border px-3 py-2"
+                    initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: '-24px' }}
+                    transition={shouldReduceMotion ? { duration: 0 } : { delay: index * 0.04, duration: 0.26, ease: motionTokens.ease.standard }}
+                    whileHover={shouldReduceMotion ? undefined : { y: -3, scale: 1.01 }}
+                    className="min-w-0 rounded-2xl border px-3 py-3 text-left shadow-[0_18px_40px_-26px_rgba(0,0,0,0.55)]"
                     style={{
-                      borderColor: 'var(--border-subtle)',
-                      background: 'rgba(255,255,255,0.05)',
+                      borderColor: 'var(--border-dim)',
+                      background: 'linear-gradient(165deg, rgba(255,255,255,0.08), rgba(255,255,255,0.025))',
                     }}
                   >
-                    <p className="type-heading text-xs font-semibold text-[var(--text-100)]">{item.name}</p>
-                    <p className="mt-1 text-[0.68rem] leading-relaxed text-[var(--text-300)] line-clamp-2">
+                    <p className="text-[0.54rem] font-bold uppercase tracking-[0.18em]" style={{ color: accent }}>
+                      Stack node
+                    </p>
+                    <p className="mt-2 type-heading text-sm font-semibold leading-tight text-[var(--text-100)]">
+                      {item.name}
+                    </p>
+                    <p className="mt-2 text-[0.68rem] leading-relaxed text-[var(--text-300)] line-clamp-3">
                       {item.impact}
                     </p>
-                  </div>
-                ))}
-              </div>
-            )}
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
         </motion.div>
 

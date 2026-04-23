@@ -175,7 +175,7 @@ function PaperCard({
     >
       <motion.div
         animate={{ rotateY: flipped ? 180 : 0 }}
-        transition={{ type: 'spring', stiffness: 130, damping: 18, mass: 0.85 }}
+        transition={{ type: 'spring', stiffness: 110, damping: 20, mass: 0.9 }}
         className="relative h-full w-full"
         style={{
           transformStyle: 'preserve-3d',
@@ -274,7 +274,7 @@ export function Publications() {
             aria-hidden="true"
           />
 
-          <div className="grid gap-5 xl:grid-cols-[1fr_22rem]">
+          <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(16rem,22rem)]">
             <div className="min-w-0">
               <p className="type-meta text-[0.66rem] font-bold text-[var(--cyan-full)]">Research Snapshot</p>
               <h3 className="mt-2 type-heading text-[1.28rem] font-bold leading-tight text-[var(--text-100)] sm:text-[1.5rem]">
@@ -289,10 +289,10 @@ export function Publications() {
               {publicationsConfig.highlights.map((metric) => (
                 <div
                   key={metric.label}
-                  className="rounded-2xl border px-3 py-3 sm:px-4"
+                  className="min-w-0 rounded-2xl border px-3 py-3 sm:px-4"
                   style={{ borderColor: 'var(--border-subtle)', background: 'var(--bg-elevated)' }}
                 >
-                  <p className="type-heading text-[1.18rem] font-bold leading-none text-[var(--text-100)] sm:text-[1.4rem]">
+                  <p className="type-heading text-[clamp(1.08rem,2vw,1.4rem)] font-bold leading-none text-[var(--text-100)] tabular-nums">
                     {metric.value}
                   </p>
                   <p className="mt-2 text-[0.6rem] font-semibold uppercase tracking-[0.12em] leading-snug text-[var(--text-400)]">

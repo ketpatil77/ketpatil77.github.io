@@ -1,6 +1,7 @@
 import { type ReactNode, type CSSProperties } from 'react';
 import { SplineScene } from './spline-scene';
 import { checkWebGLSupport } from '@/utils/3d';
+import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 
 interface SplineWithFallbackProps {
   scene: string;
@@ -35,9 +36,10 @@ function SplineWithFallback({
   style,
   containerClassName,
 }: SplineWithFallbackProps) {
+  const { shouldLoad3D } = useDeviceCapabilities();
   const hasWebGL = checkWebGLSupport();
 
-  if (!hasWebGL) {
+  if (!shouldLoad3D || !hasWebGL) {
     return (
       <FallbackContainer className={containerClassName} style={style}>
         {fallback ?? null}

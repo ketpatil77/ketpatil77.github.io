@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import type { Theme } from '@/hooks/useTheme';
+import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 
 type AetherFlowHeroProps = {
   className?: string;
@@ -71,11 +72,13 @@ function cn(...classes: Array<string | undefined>) {
 
 export default function AetherFlowHero({ className, theme = 'dark' }: AetherFlowHeroProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const { shouldLoad3D } = useDeviceCapabilities();
   // keep a mutable ref so the running animation loop reads the latest theme
   const themeRef = useRef<Theme>(theme);
   themeRef.current = theme;
 
   useEffect(() => {
+    if (!shouldLoad3D) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -213,7 +216,11 @@ export default function AetherFlowHero({ className, theme = 'dark' }: AetherFlow
       window.removeEventListener('mouseout', handleLeave);
       window.cancelAnimationFrame(frameId);
     };
-  }, []);
+  }, [shouldLoad3D]);
+
+  if (!shouldLoad3D) {
+    return null;
+  }
 
   return (
     <div

@@ -19,6 +19,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { SplineWithFallback } from '@/components/ui/spline';
 import { getHeroSceneUrl } from '@/config/spline';
 import anime from 'animejs';
+import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 
 function useSpotlight(ref: React.RefObject<HTMLElement | null>, enabled: boolean) {
   useEffect(() => {
@@ -38,7 +39,8 @@ function useSpotlight(ref: React.RefObject<HTMLElement | null>, enabled: boolean
 export function Hero() {
   const shouldReduceMotion = useReducedMotion();
   const isMobile = useIsMobile();
-  const lowPerformanceMode = shouldReduceMotion || isMobile;
+  const { shouldLoad3D, sceneQuality } = useDeviceCapabilities();
+  const lowPerformanceMode = shouldReduceMotion || isMobile || !shouldLoad3D;
   const cardRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const theme = useThemeContext();
@@ -56,7 +58,11 @@ export function Hero() {
   const mobileHeroLabel = titleParts[0] ?? heroConfig.title;
   const mobileStats = heroConfig.metrics.slice(0, 3);
 
-  const particlePalette = isLight ? ['#bf360c', '#e65100'] : ['#ffccbc', '#ff7043'];
+  const particlePalette = sceneQuality === 'low'
+    ? (isLight ? ['#c84b00', '#e65100'] : ['#ffccbc', '#ff7043'])
+    : isLight
+      ? ['#bf360c', '#e65100']
+      : ['#ffccbc', '#ff7043'];
 
   useEffect(() => {
     if (lowPerformanceMode) return;

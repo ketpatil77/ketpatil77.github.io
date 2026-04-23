@@ -855,32 +855,6 @@ export const portfolioConfig: PortfolioConfig = {
   githubHref: 'https://github.com/ketanpatil',
 };
 
-// CTA section configuration
-export interface CTAConfig {
-  tags: string[];
-  heading: string;
-  description: string;
-  buttonText: string;
-  buttonHref: string;
-  email: string;
-  backgroundImage: string;
-  responseTime: string;
-  timezone: string;
-}
-
-export const ctaConfig: CTAConfig = {
-  tags: ['Product UI', 'AI/ML Systems', 'Cybersecurity', 'Research-Backed Delivery'],
-  heading: 'Open to engineering roles that value product execution, AI systems thinking, and measurable proof.',
-  description:
-    'If your team is hiring for product engineering, AI/ML-enabled systems, cybersecurity-aware delivery, or research-aligned execution, I can share relevant case studies and role-fit details quickly.',
-  buttonText: brandConfig.resumeLabel,
-  buttonHref: brandConfig.resumeHref,
-  email: 'ket.patil77@gmail.com',
-  backgroundImage: '/images/cta-bg.jpg',
-  responseTime: '< 24 hours',
-  timezone: 'IST (UTC+5:30)',
-};
-
 // Footer section configuration
 export interface FooterConfig {
   logo: string;

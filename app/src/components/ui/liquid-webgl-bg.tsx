@@ -1,12 +1,15 @@
 import { useRef, useEffect } from 'react';
 import { useThemeContext } from '@/context/ThemeContext';
+import { useDeviceCapabilities } from '@/hooks/useDeviceCapabilities';
 
 export function LiquidWebGLBackground() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const theme = useThemeContext();
+    const { shouldLoad3D, sceneQuality } = useDeviceCapabilities();
     const isLight = theme === 'light';
 
     useEffect(() => {
+        if (!shouldLoad3D) return;
         const canvas = canvasRef.current;
         if (!canvas) return;
 
@@ -143,7 +146,7 @@ export function LiquidWebGLBackground() {
         const resize = () => {
             // Aggressively downscale WebGL resolution for massive performance boost
             // A smooth gradient doesn't need to be rendered at native 4K
-            const scale = 0.12;
+            const scale = sceneQuality === 'high' ? 0.14 : sceneQuality === 'medium' ? 0.1 : 0.08;
             canvas.width = Math.floor(window.innerWidth * scale);
             canvas.height = Math.floor(window.innerHeight * scale);
             gl.viewport(0, 0, canvas.width, canvas.height);
@@ -183,7 +186,11 @@ export function LiquidWebGLBackground() {
             window.removeEventListener('mousemove', handleMouseMove);
             cancelAnimationFrame(animationFrameId);
         };
-    }, [isLight]);
+    }, [isLight, sceneQuality, shouldLoad3D]);
+
+    if (!shouldLoad3D) {
+        return null;
+    }
 
     return (
         <div className="pointer-events-none absolute inset-0 -z-20 overflow-hidden mix-blend-normal opacity-40">

@@ -30,3 +30,5 @@ export function DeviceCapabilitiesProvider({ children }: { children: React.React
     </DeviceCapabilitiesContext.Provider>
   );
 }
+
+export { DeviceCapabilitiesContext };
